@@ -9,7 +9,7 @@
   <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@400..900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Doto:wght@400..900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="./src/styles/main.css">
   <script type="importmap">
     {
@@ -32,6 +32,7 @@
   <div id="cursor" class="cursor" aria-hidden="true"></div>
 
   <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="notes" aria-hidden="true"></div>
 
   <div class="meridian" aria-hidden="true">
     <span class="meridian__tick" style="--at: 0">06</span>
@@ -100,6 +101,17 @@
           </dl>
           <p class="project__text">Uma laje de 32 metros pousada sobre seis pilotis, entre a mata e o mar. O beiral profundo transforma a casa inteira em varanda: de manhã a sombra cobre a sala, à tarde recua até o deque.</p>
           <p class="project__light"><span>Estudo de luz</span>Melhor luz às 10h, quando a sombra do beiral encosta na parede de vidro.</p>
+          <details class="project__more">
+            <summary>Detalhes da obra</summary>
+            <ol class="project__notes">
+              <li data-note="laje"><strong>Laje nervurada de 60 cm</strong> balanço de 8 m sobre o deque.</li>
+              <li data-note="pilotis"><strong>6 pilotis Ø 50 cm</strong> em concreto aparente.</li>
+              <li data-note="caixilhos"><strong>Caixilhos de alumínio</strong> a cada 1,20 m, vidro laminado 8+8.</li>
+              <li data-note="deque"><strong>Deque em réguas de cumaru</strong> de 10 × 2 cm.</li>
+              <li data-note="piscina"><strong>Piscina de borda infinita</strong> de 12 × 3 m.</li>
+              <li data-note="jardim"><strong>Teto-jardim</strong> sobre a laje: isolamento e chuva lenta.</li>
+            </ol>
+          </details>
         </div>
       </article>
 
@@ -115,6 +127,17 @@
           </dl>
           <p class="project__text">No sertão, um teto espesso de concreto apoiado em duas paredes cegas. O pátio no centro deixa entrar um único quadrado de sol, que caminha pelo chão ao longo do dia.</p>
           <p class="project__light"><span>Estudo de luz</span>Melhor luz ao meio-dia, quando o sol desce a pino pelo pátio.</p>
+          <details class="project__more">
+            <summary>Detalhes da obra</summary>
+            <ol class="project__notes">
+              <li data-note="cobertura"><strong>Cobertura de 1,40 m</strong> massa térmica contra o calor do sertão.</li>
+              <li data-note="patio"><strong>Pátio de 8 × 8 m</strong> um único quadrado de sol.</li>
+              <li data-note="paredes"><strong>Paredes cegas</strong> com marca de fôrma de tábua.</li>
+              <li data-note="umbuzeiro"><strong>Umbuzeiro preservado</strong> no centro do pátio.</li>
+              <li data-note="cisterna"><strong>Cisterna de 16 mil litros</strong> para a chuva do ano.</li>
+              <li data-note="piso"><strong>Piso de terra batida</strong> estabilizada.</li>
+            </ol>
+          </details>
         </div>
       </article>
 
@@ -130,6 +153,17 @@
           </dl>
           <p class="project__text">Um bloco maciço de 30 metros cortado por cinco frestas verticais. Nenhuma janela olha para fora: a luz entra de lado, rasante, e desenha linhas que atravessam as estantes.</p>
           <p class="project__light"><span>Estudo de luz</span>Melhor luz às 14h, quando as frestas da fachada oeste se acendem.</p>
+          <details class="project__more">
+            <summary>Detalhes da obra</summary>
+            <ol class="project__notes">
+              <li data-note="frestas"><strong>5 frestas de 80 cm</strong> luz rasante, nunca direta nas estantes.</li>
+              <li data-note="laminas"><strong>Lâminas de concreto</strong> de 2,33 m.</li>
+              <li data-note="estantes"><strong>Estantes de 6 níveis</strong> ao longo das frestas.</li>
+              <li data-note="marquise"><strong>Marquise em balanço</strong> de 6 m na entrada.</li>
+              <li data-note="terraco"><strong>Terraço de leitura</strong> com pérgola de aço.</li>
+              <li data-note="rampa"><strong>Rampa acessível</strong> de 8% até a praça.</li>
+            </ol>
+          </details>
         </div>
       </article>
 
@@ -145,6 +179,17 @@
           </dl>
           <p class="project__text">Sete lajes empilhadas, cada uma girada nove graus em relação à de baixo. Subir o mirante é girar devagar com a paisagem, e cada andar tem a sua própria sombra.</p>
           <p class="project__light"><span>Estudo de luz</span>Melhor luz às 16h, quando as lajes abrem um leque de sombras sobre o cerrado.</p>
+          <details class="project__more">
+            <summary>Detalhes da obra</summary>
+            <ol class="project__notes">
+              <li data-note="lajes"><strong>7 lajes de 7 × 7 m</strong> cada uma girada 9°.</li>
+              <li data-note="nucleo"><strong>Núcleo de 2,40 m</strong> estrutura e escada.</li>
+              <li data-note="escada"><strong>Escada helicoidal</strong> em aço corten.</li>
+              <li data-note="guarda"><strong>Guarda-corpos de vidro</strong> de 1,10 m.</li>
+              <li data-note="biruta"><strong>Biruta no topo</strong> o mirante mostra de onde vem a brisa.</li>
+              <li data-note="cerrado"><strong>Base de pedra</strong> e arbustos do cerrado.</li>
+            </ol>
+          </details>
         </div>
       </article>
     </section>

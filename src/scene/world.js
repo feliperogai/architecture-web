@@ -125,6 +125,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
   composer.addPass(halftonePass);
 
   const lightDir = new THREE.Vector3();
+  const ndc = new THREE.Vector3();
   const moonDir = new THREE.Vector3();
   const cameraKeyframes = buildCameraKeyframes(PROJECTS);
 
@@ -143,6 +144,12 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     setExplode: buildings.setExplode,
     layerAnchors: buildings.layerAnchors,
     notePosition: buildings.notePosition,
+
+    /** Ponto do mundo → coordenadas normalizadas da câmera atual ([−1, 1], z fora disso = atrás/longe). */
+    projectNdc([x, y, z]) {
+      ndc.set(x, y, z).project(camera);
+      return [ndc.x, ndc.y, ndc.z];
+    },
 
     update({ hour, sun, sky, mouse, reducedMotion, halftone, time = 0 }) {
       city.update({ windowGlow: sky.windowGlow, time });
@@ -165,6 +172,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
         focus.y -= camera.position.distanceTo(focus) * PORTRAIT_LIFT;
       }
       camera.lookAt(focus);
+      camera.updateMatrixWorld(); // anotações projetam com a câmera deste quadro
 
       // Sol: some suavemente entre −2° e 4° de altitude
       const sunVisible = smoothstep((sun.altitude + 2) / 6);

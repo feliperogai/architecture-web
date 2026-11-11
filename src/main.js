@@ -7,6 +7,9 @@ import { createReveal } from './ui/reveal.js';
 import { createSundial } from './ui/sundial.js';
 import { createCursor } from './ui/cursor.js';
 import { playIntro } from './ui/intro.js';
+import { createAnnotations } from './ui/annotations.js';
+import { PROJECTS } from './data/projects.js';
+import { STACKED_LAYOUT_QUERY } from './layout.js';
 
 const root = document.documentElement;
 const meridian = document.querySelector('.meridian');
@@ -28,6 +31,13 @@ const reveal = createReveal(document.querySelector('[data-reveal]'));
 const sundial = createSundial(document.querySelector('[data-sundial]'));
 const cursor = createCursor(document.querySelector('#cursor'), state);
 playIntro(document.querySelector('#intro'), { reduced: state.reducedMotion });
+const annotations = createAnnotations(document.querySelector('.notes'), PROJECTS);
+
+// Lista de detalhes: aberta (só para leitores de tela) no desktop; recolhida no layout empilhado.
+const stackedQuery = matchMedia(STACKED_LAYOUT_QUERY);
+const syncDetails = () => document.querySelectorAll('.project__more').forEach((d) => { d.open = !stackedQuery.matches; });
+stackedQuery.addEventListener('change', syncDetails);
+syncDetails();
 
 /* ── Hora a partir da rolagem ── */
 let anchors = [];
@@ -134,6 +144,14 @@ function update(now) {
       time: state.reducedMotion ? 0 : now / 1000,
     });
     world.render();
+    annotations.update({
+      hour: state.hour,
+      notePosition: world.notePosition,
+      projectNdc: world.projectNdc,
+      width: root.clientWidth,
+      height: root.clientHeight,
+      stacked: stackedQuery.matches,
+    });
   }
 }
 
