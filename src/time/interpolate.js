@@ -6,6 +6,18 @@ export function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+/**
+ * Suavização exponencial independente da taxa de quadros.
+ * `rate` em 1/s; use rateFromFrameFactor para converter um "lerp de X por quadro a 60 fps".
+ */
+export function damp(current, target, rate, dt) {
+  return lerp(current, target, 1 - Math.exp(-rate * dt));
+}
+
+export function rateFromFrameFactor(factor, fps = 60) {
+  return -fps * Math.log(1 - factor);
+}
+
 export function smoothstep(t) {
   const x = clamp(t, 0, 1);
   return x * x * (3 - 2 * x);

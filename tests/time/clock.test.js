@@ -40,6 +40,11 @@ describe('formatHour', () => {
     assert.equal(formatHour(6), '06:00');
     assert.equal(formatHour(17.5), '17:30');
     assert.equal(formatHour(23), '23:00');
-    assert.equal(formatHour(6.999), '06:59');
+    assert.equal(formatHour(6.99), '06:59');
+  });
+
+  it('arredonda ao minuto mais próximo (rolagem cai em pixel inteiro)', () => {
+    assert.equal(formatHour(13.9995), '14:00');
+    assert.equal(formatHour(6.999), '07:00');
   });
 });

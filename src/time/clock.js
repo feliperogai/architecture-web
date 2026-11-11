@@ -30,7 +30,7 @@ export function hourFromScroll(scrollY, anchors) {
 }
 
 export function formatHour(hour) {
-  const total = Math.floor(hour * 60 + 1e-6);
+  const total = Math.round(hour * 60);
   const h = Math.floor(total / 60);
   const m = total % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
