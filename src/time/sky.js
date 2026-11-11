@@ -23,7 +23,7 @@ function mixSky(a, b, t) {
 export function skyAt(hour) {
   return {
     ...sampleKeyframes(SKY_KEYFRAMES, hour, mixSky),
-    fogDensity: lerp(0.022, 0.0045, smoothstep((hour - 6) / 3)),
+    fogDensity: lerp(0.007, 0.0022, smoothstep((hour - 6) / 3)),
     windowGlow: smoothstep((hour - 18.5) / 1.5),
     starOpacity: smoothstep((hour - 18.5) / 2),
   };

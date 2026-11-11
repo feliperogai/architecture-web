@@ -104,6 +104,39 @@ function update(now) {
   reveal.update();
   sundial.update(state.hour, scrollY);
   cursor.update(state.mouse, state.halftone, dt);
+
+  if (world) {
+    const offset = state.isTouch
+      ? { azimuth: 0, altitude: 0 }
+      : { azimuth: state.mouse.nx * 12, altitude: -state.mouse.ny * 5 };
+    world.update({ hour: state.hour, sun: sunPosition(state.hour, offset), sky });
+    world.render();
+  }
+}
+
+/* ── Cena 3D (opcional: sem WebGL o fundo CSS continua contando o dia) ── */
+let world = null;
+
+function hasWebGL() {
+  if (params.has('nowebgl')) return false;
+  try {
+    return !!document.createElement('canvas').getContext('webgl2');
+  } catch {
+    return false;
+  }
+}
+
+async function startWorld() {
+  if (!hasWebGL()) return;
+  try {
+    const { createWorld } = await import('./scene/world.js');
+    world = createWorld(document.querySelector('#scene'), { isTouch: state.isTouch });
+    state.webgl = true;
+    root.classList.remove('no-webgl');
+    addEventListener('resize', () => world.resize(innerWidth, innerHeight));
+  } catch (error) {
+    console.warn('Meridiana: cena 3D indisponível, seguindo com o fundo em CSS.', error);
+  }
 }
 
 function loop(now) {
@@ -127,3 +160,4 @@ if (params.has('debug')) {
 
 root.classList.add('no-webgl');
 requestAnimationFrame(loop);
+startWorld();

@@ -165,7 +165,7 @@ O **estado** é um objeto simples, atualizado a cada quadro: `{ targetHour, hour
 | 20:00 | #0f1430 | #2b2d5a | #8fa6ff | 0,25 |
 | 23:00 | #05070f | #11152b | #8fa6ff | 0,15 |
 
-`skyAt(hour)` interpola linearmente em RGB entre os keyframes vizinhos e trava nos extremos. A cor da névoa é a cor do horizonte. A densidade da névoa é alta às 06:00 e cai até as 09:00. O fundo CSS do `body` usa as mesmas cores (via variáveis CSS), então o site continua coerente sem WebGL.
+`skyAt(hour)` interpola linearmente em RGB entre os keyframes vizinhos e trava nos extremos. A cor da névoa é a cor do horizonte. A densidade da névoa (FogExp2) é 0,007 às 06:00 e cai até 0,0022 às 09:00, valores calibrados para a escala da cena em metros. O fundo CSS do `body` usa as mesmas cores (via variáveis CSS), então o site continua coerente sem WebGL.
 
 ### 5.4 Janelas e estrelas
 

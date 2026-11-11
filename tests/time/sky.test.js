@@ -26,9 +26,10 @@ describe('skyAt', () => {
   });
 
   it('névoa', () => {
-    assertClose(skyAt(6).fogDensity, 0.022, 5);
-    assertClose(skyAt(9).fogDensity, 0.0045, 5);
-    assertClose(skyAt(12).fogDensity, 0.0045, 5);
+    // Calibrada para a escala da cena (metros): ~50% de visibilidade a 120 m ao amanhecer.
+    assertClose(skyAt(6).fogDensity, 0.007, 5);
+    assertClose(skyAt(9).fogDensity, 0.0022, 5);
+    assertClose(skyAt(12).fogDensity, 0.0022, 5);
   });
 
   it('janelas e estrelas', () => {
