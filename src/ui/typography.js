@@ -23,7 +23,7 @@ export function longShadow({ altitude, azimuth }, layers = 14) {
   return Array.from({ length: layers }, (_, k) => {
     const i = k + 1;
     const alpha = 0.22 * (1 - k / layers);
-    return `${(dx * step * i).toFixed(2)}px ${(dy * step * i).toFixed(2)}px 0 rgba(27, 27, 31, ${alpha.toFixed(3)})`;
+    return `${(dx * step * i).toFixed(2)}px ${(dy * step * i).toFixed(2)}px 0 rgba(201, 130, 43, ${(alpha * 2.4).toFixed(3)})`; // ocre
   }).join(', ');
 }
 
@@ -33,22 +33,27 @@ export function letterWeight(i, n, { azimuth }, base) {
   return Math.round(clamp(base + 220 * s * Math.sin(azimuth * DEG), 200, 800));
 }
 
+/** Peso (200–800) → extrusão da Nabla (EDPT 0–200). */
+export const depthFromWeight = (weight) => Math.round(((weight - 200) / 600) * 200);
+
 /**
  * Aplica a tipografia viva: variáveis CSS no :root (--title-wght, --title-wdth, --title-shadow)
- * e o peso letra a letra do título "Meridiana". Só escreve quando muda o bastante.
+ * e, no título da abertura (palavras com [data-letters], em Nabla), a extrusão de cada bloco
+ * (--edpt) e a ordem em que os blocos caem (--i). Só escreve quando muda o bastante.
  */
 export function createTypography(root, heroTitle) {
-  let letters = [];
-  if (heroTitle) {
-    const text = heroTitle.textContent.trim();
-    heroTitle.setAttribute('aria-label', text);
-    heroTitle.textContent = '';
-    letters = [...text].map((char) => {
+  const letters = [];
+  let order = 0;
+  for (const word of heroTitle ? heroTitle.querySelectorAll('[data-letters]') : []) {
+    const chars = [...word.textContent.trim()];
+    word.textContent = '';
+    word.setAttribute('aria-hidden', 'true'); // o <h1> tem aria-label com o nome inteiro
+    chars.forEach((char, i) => {
       const span = document.createElement('span');
-      span.setAttribute('aria-hidden', 'true');
       span.textContent = char;
-      heroTitle.append(span);
-      return { span, weight: -1 };
+      span.style.setProperty('--i', String(order++));
+      word.append(span);
+      letters.push({ span, i, n: chars.length, depth: -100 }); // fora da faixa 0–200: o 1º quadro sempre escreve
     });
   }
 
@@ -73,13 +78,14 @@ export function createTypography(root, heroTitle) {
         lastShadow = shadow;
         root.style.setProperty('--title-shadow', shadow);
       }
-      letters.forEach((letter, i) => {
-        const w = letterWeight(i, letters.length, sun, lastWght);
-        if (Math.abs(w - letter.weight) >= 10) {
-          letter.weight = w;
-          letter.span.style.setProperty('--w', String(w));
+      // Blocos mais altos do lado do sol; a pilha toda cresce ao meio-dia e baixa à noite
+      for (const letter of letters) {
+        const depth = depthFromWeight(letterWeight(letter.i, letter.n, sun, lastWght));
+        if (Math.abs(depth - letter.depth) >= 4) {
+          letter.depth = depth;
+          letter.span.style.setProperty('--edpt', String(depth));
         }
-      });
+      }
     },
   };
 }

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meridiana — arquitetura que mede o tempo com luz</title>
-  <meta name="description" content="Meridiana é um estúdio de arquitetura (fictício) que projeta com a luz. Role a página e veja um dia inteiro passar sobre quatro projetos.">
+  <title>Depetris Construções — arquitetura e construção com luz</title>
+  <meta name="description" content="Depetris Construções, do arquiteto Gabriel Depetris: arquitetura e construção desenhadas com a luz. Role a página e veja um dia inteiro passar sobre a cidade e os projetos.">
   <meta name="theme-color" content="#3b3a6b">
   <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Doto:wght@400..900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Doto:wght@400..900&family=Inter+Tight:wght@400;500;600&family=Nabla:EDPT,EHLT@0..200,0..24&display=swap">
   <link rel="stylesheet" href="./src/styles/main.css">
   <script type="importmap">
     {
@@ -26,7 +26,7 @@
 
   <div id="intro" class="intro" aria-hidden="true">
     <span class="intro__time" data-intro-time>00:00</span>
-    <span class="intro__label">Meridiana</span>
+    <span class="intro__label">Depetris Construções</span>
   </div>
 
   <div id="cursor" class="cursor" aria-hidden="true"></div>
@@ -44,13 +44,13 @@
   </div>
 
   <header class="topbar">
-    <a class="logo" href="#amanhecer" aria-label="Meridiana, voltar ao início">
-      <span class="logo__mark" aria-hidden="true"></span>Meridiana
+    <a class="logo" href="#amanhecer" aria-label="Depetris Construções, voltar ao início">
+      <span class="logo__mark" aria-hidden="true"></span><span class="logo__name">Depetris</span><span class="logo__sub">Construções</span>
     </a>
     <nav class="nav" aria-label="Seções">
       <a href="#manifesto">Manifesto</a>
       <a href="#projetos">Projetos</a>
-      <a href="#estudio">Estúdio</a>
+      <a href="#estudio">Escritório</a>
       <a href="#contato">Contato</a>
     </nav>
     <div class="hud" aria-hidden="true">
@@ -62,9 +62,12 @@
   <main>
     <section id="amanhecer" class="section hero" data-hour="6">
       <div class="hero__inner">
-        <p class="eyebrow">Estúdio de arquitetura · São Paulo</p>
-        <h1 class="hero__title">Meridiana</h1>
-        <p class="hero__tagline">Arquitetura que mede o tempo com luz.</p>
+        <p class="eyebrow">Arquiteto Gabriel Depetris · São Paulo</p>
+        <h1 class="hero__title" aria-label="Depetris Construções">
+          <span class="hero__word" data-letters>Depetris</span>
+          <span class="hero__word hero__word--sub" data-letters>Construções</span>
+        </h1>
+        <p class="hero__tagline">Construções que medem o tempo com luz.</p>
         <p class="hero__hint"><span class="hero__hint-dot" aria-hidden="true"></span>Role para o dia passar</p>
       </div>
     </section>
@@ -75,7 +78,7 @@
         <h2 id="manifesto-title" class="label">Manifesto · 08:00</h2>
         <p class="manifesto__text" data-reveal>
           Uma <em>meridiana</em> é uma linha no chão de igrejas antigas onde um raio de sol marca o meio-dia.
-          Ali, o prédio é um relógio. Desenhamos frestas, beirais e pátios para que a luz diga as horas.
+          Ali, o prédio é um relógio. Na Depetris, desenhamos e construímos frestas, beirais e pátios para que a luz diga as horas.
           O concreto é só o lugar onde ela para.
         </p>
       </div>
@@ -84,16 +87,16 @@
     <section id="projetos" class="projects" aria-labelledby="projetos-title">
       <header class="section projects__intro">
         <div class="panel projects__intro-panel">
-          <h2 id="projetos-title" class="label">Projetos · 10:00 — 16:00</h2>
+          <h2 id="projetos-title" class="label">Projetos conceituais · 10:00 — 16:00</h2>
           <p class="projects__lede">Quatro estudos de luz.</p>
-          <p class="projects__hint">A cena vira pontos, como num jornal. Passe o cursor por ela para revelar o render.</p>
+          <p class="projects__hint">Estudos conceituais do escritório. Em cada parada, as anotações mostram como a obra é feita; entre uma e outra, a cidade vira pontos e o cursor revela o render.</p>
         </div>
       </header>
 
       <article id="p-varanda" class="project" data-project="varanda" data-side="left" aria-labelledby="t-varanda">
         <i class="hour-mark hour-mark--project" data-hour="10" aria-hidden="true"></i>
         <div class="panel project__card">
-          <p class="project__index">01 / 04 · 10:00</p>
+          <p class="project__index">01 / 04 · 10:00 · Conceitual</p>
           <h3 id="t-varanda" class="project__title">Casa Varanda</h3>
           <dl class="project__meta">
             <div><dt>Local</dt><dd>Ubatuba, SP</dd></div>
@@ -122,7 +125,7 @@
       <article id="p-seco" class="project" data-project="seco" data-side="right" aria-labelledby="t-seco">
         <i class="hour-mark hour-mark--project" data-hour="12" aria-hidden="true"></i>
         <div class="panel project__card">
-          <p class="project__index">02 / 04 · 12:00</p>
+          <p class="project__index">02 / 04 · 12:00 · Conceitual</p>
           <h3 id="t-seco" class="project__title">Pavilhão Seco</h3>
           <dl class="project__meta">
             <div><dt>Local</dt><dd>Cabaceiras, PB</dd></div>
@@ -151,7 +154,7 @@
       <article id="p-fresta" class="project" data-project="fresta" data-side="left" aria-labelledby="t-fresta">
         <i class="hour-mark hour-mark--project" data-hour="14" aria-hidden="true"></i>
         <div class="panel project__card">
-          <p class="project__index">03 / 04 · 14:00</p>
+          <p class="project__index">03 / 04 · 14:00 · Conceitual</p>
           <h3 id="t-fresta" class="project__title">Biblioteca Fresta</h3>
           <dl class="project__meta">
             <div><dt>Local</dt><dd>Belo Horizonte, MG</dd></div>
@@ -180,7 +183,7 @@
       <article id="p-brisa" class="project" data-project="brisa" data-side="right" aria-labelledby="t-brisa">
         <i class="hour-mark hour-mark--project" data-hour="16" aria-hidden="true"></i>
         <div class="panel project__card">
-          <p class="project__index">04 / 04 · 16:00</p>
+          <p class="project__index">04 / 04 · 16:00 · Conceitual</p>
           <h3 id="t-brisa" class="project__title">Mirante Brisa</h3>
           <dl class="project__meta">
             <div><dt>Local</dt><dd>Chapada dos Veadeiros, GO</dd></div>
@@ -211,19 +214,15 @@
       <i class="hour-mark" data-hour="17.5" aria-hidden="true"></i>
       <div class="panel studio__panel">
         <div class="studio__text">
-          <h2 id="estudio-title" class="label">O estúdio · 17:30</h2>
+          <h2 id="estudio-title" class="label">O escritório · 17:30</h2>
           <p class="studio__lede">Começamos cada projeto pela pergunta mais simples: onde estará o sol às quatro da tarde?</p>
-          <p>A Meridiana foi fundada em 2014, em São Paulo. Somos sete pessoas: arquitetas e arquitetos, uma lighting designer e um marceneiro. Projetamos casas, bibliotecas e abrigos onde a luz é o primeiro material.</p>
+          <p>A Depetris Construções é o escritório do arquiteto <strong>Gabriel Depetris</strong>. Projeta e constrói casas, espaços de trabalho e abrigos em que a luz é o primeiro material, do primeiro croqui à entrega da obra.</p>
           <ol class="process">
             <li><span>01</span><p><strong>Medir.</strong> Passamos um dia inteiro no terreno, do nascer ao pôr do sol.</p></li>
             <li><span>02</span><p><strong>Recortar.</strong> Desenhamos as aberturas antes das paredes.</p></li>
             <li><span>03</span><p><strong>Calibrar.</strong> Maquetes e simulações de luz para cada estação do ano.</p></li>
+            <li><span>04</span><p><strong>Construir.</strong> Acompanhamos a obra até a luz entrar do jeito que foi desenhada.</p></li>
           </ol>
-          <ul class="stats">
-            <li><strong>12</strong> anos</li>
-            <li><strong>41</strong> obras</li>
-            <li><strong>1</strong> relógio de sol em cada uma</li>
-          </ul>
         </div>
         <figure class="sundial" data-sundial aria-hidden="true"></figure>
       </div>
@@ -234,19 +233,19 @@
       <div class="panel panel--night contact__panel">
         <h2 id="contato-title" class="label">Contato · 20:00</h2>
         <p class="contact__title">Vamos desenhar a luz do seu projeto.</p>
-        <a class="contact__mail" href="mailto:ola@meridiana.arq">ola@meridiana.arq</a>
+        <a class="contact__phone" href="tel:+5511953110104">+55 11 95311-0104</a>
+        <a class="contact__whatsapp" href="https://wa.me/5511953110104" target="_blank" rel="noopener">Conversar no WhatsApp</a>
         <address class="contact__address">
-          Rua das Frestas, 180 · Vila Madalena<br>
-          São Paulo, SP
+          Gabriel Depetris · Arquiteto<br>
+          Depetris Construções · São Paulo, SP
         </address>
-        <p class="contact__hours">Atendemos das 9h às 18h, ou enquanto houver luz.</p>
       </div>
     </section>
   </main>
 
   <footer class="footer" data-hour="23">
     <p class="footer__night">Boa noite.</p>
-    <p class="footer__note">© 2026 Meridiana — estúdio fictício, projeto de portfólio. Feito com luz, concreto e Three.js.</p>
+    <p class="footer__note">© 2026 Depetris Construções · Gabriel Depetris, arquiteto · +55 11 95311-0104. Os projetos apresentados são conceituais.</p>
   </footer>
 </body>
 </html>

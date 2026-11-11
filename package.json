@@ -1,8 +1,8 @@
 {
-  "name": "meridiana",
+  "name": "depetris-construcoes",
   "version": "1.0.0",
   "private": true,
-  "description": "Site do estúdio fictício de arquitetura Meridiana: a rolagem é a passagem de um dia.",
+  "description": "Site da Depetris Construções (arquiteto Gabriel Depetris): a rolagem é a passagem de um dia sobre uma cidade-maquete.",
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.js",

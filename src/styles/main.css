@@ -1,12 +1,22 @@
+/* Nabla recolorida em ocres: topos em areia, faces em ocre, laterais em terracota */
+@font-palette-values --ocre {
+  font-family: Nabla;
+  base-palette: 0;
+  override-colors: 0 #fbe3a6, 1 #c9822b, 2 #d9952e, 3 #e0a526, 4 #d9952e, 5 #e8b84a, 6 #b5541f, 7 #c65d3b, 8 #f6d58a, 9 #d9952e, 10 #a8641c;
+}
+
 /* ───────────────────────── Tokens ───────────────────────── */
 :root {
   --concrete: #d9d4cb;
   --paper: #f3efe7;
   --ink: #1b1b1f;
   --ink-soft: #4a4740;
-  --brass: #b08d57; /* linhas e detalhes */
-  --brass-text: #664a1f; /* texto pequeno em latão: AA sobre os painéis claros */
-  --glow: #ffcf7a;
+  /* Ocres da Depetris (os nomes "brass" ficam por compatibilidade) */
+  --brass: #c9822b; /* ocre: linhas e detalhes */
+  --brass-text: #6e4210; /* ocre escuro: texto pequeno AA sobre os painéis claros */
+  --glow: #f2b33d; /* ocre-amarelo vivo */
+  --sand: #f2d6a2;
+  --terracotta: #c65d3b;
 
   --sky-zenith: #3b3a6b;
   --sky-horizon: #f2a7a0;
@@ -16,7 +26,7 @@
   --fg-soft: var(--ink-soft);
 
   --font-display: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --font-brand: 'Nabla', 'Bricolage Grotesque', system-ui, sans-serif;
   --font-sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-dot: 'Doto', ui-monospace, monospace;
 
@@ -106,6 +116,10 @@ html.no-webgl .hero__hint-dot {
   background: var(--ink);
 }
 
+html.no-webgl .hero__tagline {
+  color: var(--brass-text);
+}
+
 html.no-webgl .explode,
 html.no-webgl .notes {
   display: none;
@@ -152,10 +166,9 @@ main,
 }
 
 .intro__label {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.4rem;
-  color: #b9b6c9;
+  font-family: var(--font-brand);
+  font-palette: --ocre;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
 }
 
 .cursor {
@@ -202,19 +215,30 @@ main,
 
 .logo {
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-serif);
-  font-size: 1.7rem;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   line-height: 1;
   text-decoration: none;
 }
 
+.logo__sub {
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  opacity: 0.8;
+}
+
 .logo__mark {
-  width: 2px;
-  height: 1.3em;
-  background: var(--brass);
-  box-shadow: 0 0 0 3px transparent;
+  align-self: center;
+  width: 12px;
+  height: 12px;
+  background: var(--glow);
+  box-shadow: 3px 3px 0 var(--terracotta); /* um bloco de construção */
 }
 
 .nav {
@@ -379,27 +403,56 @@ main,
 
 .hero__title {
   margin: 0;
-  font-family: var(--font-display);
-  text-shadow: var(--title-shadow, none);
+  font-family: var(--font-brand);
+  font-palette: --ocre;
   font-weight: 400;
-  font-size: clamp(3.4rem, 11.5vw, 10.5rem);
-  line-height: 0.86;
-  letter-spacing: -0.04em;
+  font-size: clamp(3rem, 11vw, 10rem);
+  line-height: 0.95;
 }
 
-/* "Meridiana" letra a letra: mais pesada do lado do sol (peso em --w, vindo do JS) */
-.hero__title span {
-  font-variation-settings: 'wght' var(--w, var(--title-wght, 600)), 'wdth' var(--title-wdth, 100), 'opsz' 96;
-  transition: font-variation-settings 0.5s ease;
+.hero__word {
+  display: block;
+  white-space: nowrap;
+}
+
+.hero__word--sub {
+  font-size: 0.42em;
+  margin-top: 0.1em;
+}
+
+/* Letra a letra: extrusão (EDPT) pelo sol, vinda do JS em --edpt; os blocos caem na abertura */
+.hero__word span {
+  display: inline-block;
+  font-variation-settings: 'EDPT' var(--edpt, 100), 'EHLT' 12;
+  animation: brick-drop 0.9s cubic-bezier(0.2, 1.4, 0.35, 1) backwards;
+  animation-delay: calc(1.3s + var(--i, 0) * 70ms);
+  transition: font-variation-settings 0.6s ease, transform 0.25s ease;
+}
+
+.hero__word span:hover {
+  transform: translateY(-0.12em) rotate(-4deg);
+}
+
+@keyframes brick-drop {
+  from { transform: translateY(-1.4em) rotate(-10deg); opacity: 0; }
+  55% { opacity: 1; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__word span {
+    animation: none;
+  }
 }
 
 .hero__tagline {
-  margin: 18px 0 0;
-  max-width: 22ch;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  margin: 22px 0 0;
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
   line-height: 1.15;
+  color: var(--glow);
 }
 
 .hero__hint {
@@ -437,10 +490,11 @@ main,
 
 .manifesto__text {
   margin: 0;
-  font-family: var(--font-serif);
-  font-size: clamp(1.7rem, 3.4vw, 3.2rem);
-  line-height: 1.14;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3.2vw, 3rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
 }
 
 /* Projetos */
@@ -555,9 +609,10 @@ main,
 
 .studio__lede {
   margin: 0 0 16px;
-  font-family: var(--font-serif);
-  font-size: clamp(1.6rem, 2.8vw, 2.5rem);
-  line-height: 1.1;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.6vw, 2.3rem);
+  line-height: 1.12;
 }
 
 .process {
@@ -667,10 +722,10 @@ main,
 }
 
 .sundial__time {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 34px;
-  fill: var(--ink);
+  font-family: var(--font-dot);
+  font-weight: 800;
+  font-size: 30px;
+  fill: var(--brass-text);
   text-anchor: middle;
 }
 
@@ -697,14 +752,34 @@ main,
   line-height: 1.02;
 }
 
-.contact__mail {
+.contact__phone {
   display: inline-block;
   font-family: var(--font-dot);
-  font-weight: 700;
-  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
   color: var(--glow);
   text-decoration: none;
-  border-bottom: 1px solid currentColor;
+  border-bottom: 2px solid currentColor;
+}
+
+.contact__whatsapp {
+  display: flex;
+  width: fit-content;
+  margin: 20px auto 0;
+  padding: 12px 20px;
+  font: 700 0.8rem/1 var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--glow);
+  text-decoration: none;
+  box-shadow: 4px 4px 0 var(--terracotta);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact__whatsapp:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--terracotta);
 }
 
 .contact__address {
@@ -713,11 +788,7 @@ main,
   color: #d8d4e4;
 }
 
-.contact__hours {
-  margin: 0;
-  color: #b9b6c9;
-  font-size: 0.92rem;
-}
+
 
 /* Rodapé */
 .footer {
@@ -731,9 +802,9 @@ main,
 
 .footer__night {
   margin: 0;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(3rem, 10vw, 9rem);
+  font-family: var(--font-brand);
+  font-palette: --ocre;
+  font-size: clamp(2.6rem, 9vw, 8rem);
   line-height: 1;
 }
 
@@ -790,7 +861,7 @@ main,
 .note {
   max-width: 230px;
   padding: 6px 10px 7px;
-  font-family: 'Architects Daughter', 'Comic Sans MS', cursive;
+  font-family: 'Architects Daughter', system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.25;
   color: var(--ink);
@@ -831,24 +902,27 @@ main,
   align-items: center;
   gap: 10px;
   margin-top: 16px;
-  padding: 9px 14px;
-  font: 600 0.72rem/1 var(--font-sans);
+  padding: 10px 16px;
+  font: 700 0.72rem/1 var(--font-sans);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--paper);
-  background: var(--ink);
+  color: var(--ink);
+  background: var(--glow);
   border: 0;
+  box-shadow: 3px 3px 0 var(--terracotta);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .explode:hover {
-  background: #33333a;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--terracotta);
 }
 
 .explode[aria-pressed='true'] {
   color: var(--ink);
-  background: var(--glow);
+  background: var(--sand);
+  box-shadow: inset 0 0 0 2px var(--brass);
 }
 
 .explode__icon {

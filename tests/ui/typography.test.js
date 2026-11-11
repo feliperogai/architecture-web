@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { assertClose } from '../helpers.js';
-import { titleAxes, longShadow, letterWeight } from '../../src/ui/typography.js';
+import { titleAxes, longShadow, letterWeight, depthFromWeight } from '../../src/ui/typography.js';
 
 describe('tipografia viva', () => {
   it('eixos pelo sol', () => {
@@ -22,5 +22,10 @@ describe('tipografia viva', () => {
     assert.ok(letterWeight(8, 9, sun, 500) > letterWeight(0, 9, sun, 500));
     assert.equal(letterWeight(4, 9, sun, 500), 500);
     assert.equal(letterWeight(8, 9, { azimuth: 90 }, 790), 800); // trava no máximo do eixo
+  });
+  it('peso → extrusão da Nabla (EDPT 0–200)', () => {
+    assert.equal(depthFromWeight(200), 0);
+    assert.equal(depthFromWeight(500), 100);
+    assert.equal(depthFromWeight(800), 200);
   });
 });

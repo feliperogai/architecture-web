@@ -6,9 +6,9 @@ import { carPosition } from '../city/generate.js';
 
 // Cidade-maquete: tudo branco/cinza de maquete de dia; à noite acendem janelas, postes e faróis.
 const COLORS = {
-  building: 0xefebe4,
+  building: 0xf1e6d2, // areia quente
   street: 0xa9a59e,
-  sidewalk: 0xd6d1c8,
+  sidewalk: 0xdccfb8,
   crown: 0xdfe2d4,
   trunk: 0xcfc8bc,
   lamp: 0x8d8a84,

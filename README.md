@@ -1,25 +1,24 @@
-# Meridiana
+# Depetris Construções
 
-**Arquitetura que mede o tempo com luz.** Site de um estúdio de arquitetura fictício em que rolar a página é ver um dia inteiro passar, das 06:00 às 23:00.
+Site do escritório **Depetris Construções**, do arquiteto **Gabriel Depetris** (São Paulo, +55 11 95311-0104). Nele, rolar a página é ver um dia inteiro passar sobre uma cidade-maquete, das 06:00 às 23:00.
 
-> Meridiana é um estúdio **fictício**, criado como projeto de portfólio. Nomes, projetos, endereço e e-mail são inventados.
+> As quatro obras apresentadas (Casa Varanda, Pavilhão Seco, Biblioteca Fresta e Mirante Brisa) são **projetos conceituais**, sinalizados assim no site.
 
 ## O conceito
 
 Uma *meridiana* é uma linha no chão de igrejas antigas onde um raio de sol, entrando por um furo no telhado, marca o meio-dia. Ali, o prédio funciona como um relógio. O site leva essa ideia para a página:
 
-- **A rolagem é a hora do dia.** Sol, céu, névoa, câmera, janelas e relógio respondem a um único valor.
-- **Uma cidade-maquete inteira:** 523 prédios brancos com caixas d'água, ruas com faixas de pedestre, árvores, postes, pessoas e 70 carros andando. A Avenida Meridiana tem a linha de latão no canteiro central. À noite, a cidade acende janela por janela.
-- **Quatro obras detalhadas,** as únicas com materiais reais: Casa Varanda, Pavilhão Seco, Biblioteca Fresta e Mirante Brisa.
+- **A rolagem é a hora do dia.** Sol, céu, névoa, câmera, janelas e relógio respondem a um único valor. O mouse empurra o sol alguns graus, e as sombras acompanham.
+- **Uma cidade-maquete inteira:** centenas de prédios em tom de areia com caixas d'água, ruas com faixas de pedestre, árvores, postes, pessoas e carros andando. À noite, a cidade acende janela por janela.
+- **Quatro obras detalhadas,** as únicas com materiais reais.
   - A câmera para e orbita cada obra enquanto a sombra anda pelo prédio.
-  - **Anotações técnicas** presas ao 3D, em letra de arquiteto: seis por obra.
+  - **Anotações técnicas** presas ao 3D, em letra de arquiteto.
   - **Botão "Explodir camadas":** separa a obra em fundação, estrutura, lajes, vedações, cobertura, interiores e paisagismo.
 - **Halftone nos voos:** entre uma obra e outra, a cidade vira pontos sobre papel e o cursor é uma lente que revela o render.
-- **Planta de situação** no canto: quadras, avenida, obras numeradas, norte, escala, câmera e sol.
-- **Tipografia viva:**
-  - os títulos em Bricolage Grotesque ficam finos e condensados à noite e pesados ao meio-dia;
-  - eles projetam uma sombra longa oposta ao sol;
-  - em "Meridiana", as letras do lado do sol ficam mais grossas.
+- **Instrumentos:** relógio em matriz de pontos, relógio de sol tipográfico, a régua do dia e a planta de situação com câmera e sol.
+- **Tipografia viva em ocres:**
+  - a marca em **Nabla**, com blocos isométricos recoloridos em ocre e terracota, que caem um a um na abertura e balançam ao passar o mouse; a altura dos blocos cresce com o sol;
+  - os títulos em **Bricolage Grotesque** ficam finos à noite e pesados ao meio-dia, com uma sombra longa ocre oposta ao sol.
 
 ## Como rodar
 
@@ -27,7 +26,7 @@ O projeto não tem dependências nem etapa de build: são módulos ES nativos, e
 
 ```bash
 npm run dev    # servidor local em http://127.0.0.1:5173
-npm test       # testes da matemática do tempo, do sol, do céu e da câmera
+npm test       # testes: tempo, sol, céu, cidade, câmera, enquadramento, anotações, tipografia
 ```
 
 Como o repositório já é o site, ele pode ser publicado como está (por exemplo no GitHub Pages).
@@ -37,7 +36,7 @@ Como o repositório já é o site, ele pode ser publicado como está (por exempl
 | Parâmetro | Efeito |
 |---|---|
 | `?nowebgl` | Força o modo sem 3D: o fundo em degradê CSS continua contando o dia |
-| `?debug` | Expõe `window.__meridiana` (`state` e `tick()`) para inspeção |
+| `?debug` | Expõe `window.__meridiana` (`state`, `world` e `tick()`) para inspeção |
 
 ## Estrutura
 
@@ -50,11 +49,11 @@ src/scene/              Three.js: mundo, céu, cidade, obras por camada, estrela
 src/ui/                 HUD, manifesto, relógio de sol, intro, cursor, anotações, tipografia, planta
 src/data/projects.js    peças, camadas, notas e câmera das 4 obras
 tests/                  node --test
-docs/superpowers/       spec e plano de implementação
+docs/superpowers/       specs e planos de implementação
 ```
 
 ## Acessibilidade
 
-- Todo o conteúdo é HTML de verdade. O canvas é decorativo.
-- Com `prefers-reduced-motion`, a câmera fica parada, não há intro e a rolagem suave é desligada. O céu e o sol continuam mudando.
+- Todo o conteúdo é HTML de verdade. O canvas e as sobreposições são decorativos.
+- Com `prefers-reduced-motion`, a câmera fica parada, não há intro, os blocos da marca não caem e a rolagem suave é desligada. O céu e o sol continuam mudando.
 - Sem WebGL, ou se o contexto 3D cair, o site continua navegável com o fundo em CSS.
