@@ -6,7 +6,6 @@ import { smoothstep } from '../time/interpolate.js';
 import { sunDirection } from '../time/sun.js';
 import { createSkyDome } from './sky-dome.js';
 import { createBuildings } from './buildings.js';
-import { createWindows } from './windows.js';
 import { createStars } from './stars.js';
 import { PROJECTS } from '../data/projects.js';
 import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
@@ -108,9 +107,8 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
   scene.add(city.group);
 
   // Projetos, janelas e estrelas
-  scene.add(createBuildings(PROJECTS));
-  const windows = createWindows(PROJECTS);
-  scene.add(windows.group);
+  const buildings = createBuildings(PROJECTS);
+  scene.add(buildings.group);
   const stars = createStars();
   scene.add(stars.points);
 
@@ -142,6 +140,9 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     composer,
     focus,
     cityData,
+    setExplode: buildings.setExplode,
+    layerAnchors: buildings.layerAnchors,
+    notePosition: buildings.notePosition,
 
     update({ hour, sun, sky, mouse, reducedMotion, halftone, time = 0 }) {
       city.update({ windowGlow: sky.windowGlow, time });
@@ -192,7 +193,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
       skyDome.update(sky, d, sunVisible);
       stars.points.position.copy(camera.position);
       stars.update(sky.starOpacity);
-      windows.update(sky.windowGlow);
+      buildings.updateNight(sky.windowGlow);
     },
 
     resize() {

@@ -193,6 +193,9 @@ document.addEventListener('visibilitychange', () => {
 if (params.has('debug')) {
   window.__meridiana = {
     state,
+    get world() {
+      return world;
+    },
     tick() {
       measure();
       state.hour = hourFromScroll(scrollY, anchors);
