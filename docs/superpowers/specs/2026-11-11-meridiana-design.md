@@ -89,15 +89,16 @@ Os textos de cada projeto ficam no `index.html`, como texto real. `src/data/proj
 ```
 architecture-web/
   index.html                 marcação de todas as seções (texto real, semântico)
-  package.json
-  vite.config.js
+  package.json               scripts: dev (scripts/serve.js) e test (node --test)
+  scripts/serve.js           servidor estático local, sem dependências
   README.md
   public/favicon.svg
   src/
     main.js                  inicialização: lê âncoras, liga cena, UI e loop
+    layout.js                condição única do layout empilhado (celular/tablet em pé), espelhada no CSS
     styles/main.css
     data/projects.js         id, hora, geometria e câmera dos 4 projetos
-    time/interpolate.js      lerp, clamp, smoothstep, lerpColor, sampleKeyframes
+    time/interpolate.js      lerp, clamp, smoothstep, lerpColor, sampleKeyframes, damp
     time/clock.js            hourFromScroll(scrollY, anchors), formatHour(h)
     time/sun.js              sunPosition(hour, offset) -> { altitude, azimuth, aboveHorizon }
     time/sky.js              SKY_KEYFRAMES, skyAt(hour) -> paleta interpolada
@@ -113,7 +114,7 @@ architecture-web/
     ui/reveal.js             manifesto que acende palavra por palavra
     ui/cursor.js             anel do cursor e estado da lente
     ui/intro.js              contagem de 00:00 a 06:00
-  tests/time/*.test.js
+  tests/**/*.test.js         tempo, câmera, cursor, layout e contraste do CSS
 ```
 
 Cada módulo de `time/` é puro (sem DOM e sem Three.js), o que permite testá-los isoladamente. Os módulos de `scene/` recebem um objeto de estado e não leem o DOM diretamente; quem lê o DOM é `main.js`.
@@ -176,7 +177,7 @@ O **estado** é um objeto simples, atualizado a cada quadro: `{ targetHour, hour
 
 - Um ShaderPass faz a amostragem da cena em células de 7 px (multiplicadas pelo pixel ratio). O raio do ponto é proporcional à escuridão da célula, o ponto tem a cor da célula e o fundo é a cor papel.
 - **Lente**: círculo de 140 px de raio com borda suave de 24 px, centrado no cursor, onde aparece a imagem original.
-- O alvo de `halftoneMix` é 1 quando a hora suavizada está em [09:30, 16:30] e 0 fora disso. O valor real persegue o alvo com lerp por quadro (fator 0,06), o que dá uma transição de cerca de 0,6 s. Como a hora comanda tudo, isso coincide com a entrada e a saída de `#projetos`.
+- O alvo de `halftoneMix` é 1 quando a hora suavizada está em [09:30, 16:30] e 0 fora disso. O valor real persegue o alvo com suavização exponencial por tempo (`damp`), equivalente a um lerp de 0,06 por quadro a 60 fps e igual em qualquer taxa de quadros, o que dá uma transição de cerca de 0,6 s. A lente fica no centro do anel do cursor (a mesma posição suavizada), para a borda casar com o anel em movimento. Como a hora comanda tudo, isso coincide com a entrada e a saída de `#projetos`.
 - Em toque, sem hover, a lente fica fixa em (50%, 42%) da tela.
 
 ### 5.6 Câmera
@@ -188,7 +189,9 @@ O **estado** é um objeto simples, atualizado a cada quadro: `{ targetHour, hour
 ## 6. Desempenho
 
 - `setPixelRatio(min(devicePixelRatio, 2))`, ou 1,5 em dispositivos de toque.
-- Mapa de sombra de 2048 px no desktop e 1024 px no toque, com PCFSoftShadowMap e só a luz do sol ou da lua projetando sombra.
+- Mapa de sombra de 2048 px no desktop e 1024 px no toque, com PCFShadowMap (o PCFSoftShadowMap está obsoleto desde a r182) e só a luz do sol ou da lua projetando sombra.
+- Sem halftone, a cena é desenhada direto na tela, com antialias nativo e sem passes extras. Com halftone, o composer usa um alvo com MSAA de 4 amostras.
+- Tamanhos vêm da área útil da janela (`clientWidth`/`clientHeight`), sem a barra de rolagem.
 - O loop pausa em `visibilitychange` quando a aba fica oculta.
 - O HUD só toca no DOM quando o minuto exibido muda.
 
@@ -201,12 +204,12 @@ O **estado** é um objeto simples, atualizado a cada quadro: `{ targetHour, hour
 
 ## 8. Testes e verificação
 
-- **Vitest** em `tests/time/`:
+- **`node --test`** em `tests/` (além do tempo: câmera, cursor, layout empilhado e contraste AA dos tokens do CSS):
   - `interpolate`: clamp, lerp, lerpColor e `sampleKeyframes` nos extremos e no meio.
   - `clock`: `hourFromScroll` antes, entre e depois das âncoras; `formatHour` (6 → "06:00", 17,5 → "17:30", 23 → "23:00").
   - `sun`: nascer (altitude 0, azimute 90), meio-dia solar (altitude perto de 70°, azimute perto de 0°), pôr (altitude 0, azimute −90°), noite (`aboveHorizon = false`) e offset do mouse.
   - `sky`: valores exatos nos keyframes, interpolação no meio do trecho e trava nos extremos.
-- `npm run build` sem erros.
+- Todos os recursos carregam com status 200 pelo servidor local (não há etapa de build).
 - Verificação visual no navegador do app, em desktop (1440×900) e celular (375×812): cada seção mostra a hora certa no HUD, o halftone e a lente funcionam nos projetos, as janelas acendem à noite e não há erros no console.
 
 ## 9. Fora do escopo

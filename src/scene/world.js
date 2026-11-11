@@ -11,21 +11,28 @@ import { createStars } from './stars.js';
 import { PROJECTS } from '../data/projects.js';
 import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
 import { createHalftonePass, updateHalftone } from './halftone.js';
+import { isStackedLayout } from '../layout.js';
 
 const PARALLAX = 0.6;
-// Telas em pé (celular): a ficha fica embaixo, então a câmera mira o centro do prédio,
-// se afasta um pouco e abre o campo de visão para o prédio caber na largura estreita.
-const PORTRAIT_ASPECT = 0.85;
+// Layout empilhado (celular e tablet em pé): a ficha fica embaixo, então a câmera mira o centro
+// do prédio, se afasta um pouco e abre o campo de visão para o prédio caber na largura estreita.
 const PORTRAIT_PULLBACK = 1.25;
 const PORTRAIT_LIFT = 0.14; // abaixa o olhar para o prédio subir no quadro
-const fovFor = (aspect) => (aspect < PORTRAIT_ASPECT ? 55 : 40);
+const fovFor = (stacked) => (stacked ? 55 : 40);
+
+// Área útil da janela, sem a barra de rolagem: é o tamanho real do canvas fixo (inset: 0).
+const viewport = () => ({
+  width: document.documentElement.clientWidth,
+  height: document.documentElement.clientHeight,
+});
 
 const SUN_DISTANCE = 300;
 const MIN_LIGHT_ALTITUDE = 4;
 
 /**
- * Renderer, câmera, luzes, terreno e a linha da meridiana.
- * update(frame) recebe { hour, sun, sky } e só altera a cena; render() desenha.
+ * Renderer, câmera, luzes, terreno, projetos e pós-processamento.
+ * update(frame) recebe { hour, sun, sky, mouse, reducedMotion, halftone } e só altera a cena;
+ * render() desenha; resize() relê o tamanho da área útil da janela.
  */
 export function createWorld(canvas, { isTouch, onContextLost }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -34,7 +41,9 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     onContextLost?.();
   });
   renderer.setPixelRatio(Math.min(devicePixelRatio, isTouch ? 1.5 : 2));
-  renderer.setSize(innerWidth, innerHeight, false);
+  let { width, height } = viewport();
+  let stacked = isStackedLayout(width, height);
+  renderer.setSize(width, height, false);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -42,7 +51,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0xf2a7a0, 0.022);
 
-  const camera = new THREE.PerspectiveCamera(fovFor(innerWidth / innerHeight), innerWidth / innerHeight, 0.5, 2500);
+  const camera = new THREE.PerspectiveCamera(fovFor(stacked), width / height, 0.5, 2500);
   camera.position.set(0, 140, 260);
   const focus = new THREE.Vector3(25, 0, -10);
   camera.lookAt(focus);
@@ -99,7 +108,12 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
   scene.add(stars.points);
 
   // Pós-processamento
-  const composer = new EffectComposer(renderer);
+  // Alvo com MSAA: sem isso o composer renderiza sem antialias (samples: 0 por padrão).
+  const bufferSize = renderer.getDrawingBufferSize(new THREE.Vector2());
+  const composer = new EffectComposer(
+    renderer,
+    new THREE.WebGLRenderTarget(bufferSize.x, bufferSize.y, { type: THREE.HalfFloatType, samples: 4 }),
+  );
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(new OutputPass());
   const halftonePass = createHalftonePass(); // depois do OutputPass: trabalha em sRGB
@@ -124,8 +138,8 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     update({ hour, sun, sky, mouse, reducedMotion, halftone }) {
       updateHalftone(halftonePass, {
         ...halftone,
-        width: innerWidth,
-        height: innerHeight,
+        width,
+        height,
         pixelRatio: renderer.getPixelRatio(),
       });
 
@@ -135,7 +149,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
       const py = reducedMotion ? 0 : -mouse.ny * PARALLAX;
       camera.position.set(view.position[0] + px, view.position[1] + py, view.position[2]);
       focus.set(view.target[0], view.target[1], view.target[2]);
-      if (camera.aspect < PORTRAIT_ASPECT && view.center) {
+      if (stacked && view.center) {
         focus.set(view.center[0], view.center[1], view.center[2]);
         camera.position.sub(focus).multiplyScalar(PORTRAIT_PULLBACK).add(focus);
         focus.y -= camera.position.distanceTo(focus) * PORTRAIT_LIFT;
@@ -172,16 +186,21 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
       windows.update(sky.windowGlow);
     },
 
-    resize(width, height) {
+    resize() {
+      ({ width, height } = viewport());
+      stacked = isStackedLayout(width, height);
       renderer.setSize(width, height, false);
       composer.setSize(width, height);
       camera.aspect = width / height;
-      camera.fov = fovFor(camera.aspect);
+      camera.fov = fovFor(stacked);
       camera.updateProjectionMatrix();
     },
 
     render() {
-      composer.render();
+      // Sem halftone, desenha direto na tela: antialias nativo (MSAA) e sem passes extras.
+      // O renderer aplica o mesmo tone mapping e a mesma conversão para sRGB do OutputPass.
+      if (halftonePass.enabled) composer.render();
+      else renderer.render(scene, camera);
     },
   };
 }

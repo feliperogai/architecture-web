@@ -4,11 +4,15 @@ const FOLLOW_RATE = rateFromFrameFactor(0.2);
 const SMALL = 28;
 const LENS = 280; // diâmetro = 2 × raio da lente do halftone (140 px)
 
-/** Anel que segue o mouse; vira a borda da lente quando lens → 1. Oculto em toque. */
+/**
+ * Anel que segue o mouse; vira a borda da lente quando lens → 1. Oculto em toque.
+ * update() devolve o centro do anel (px CSS) para a lente usar a mesma posição suavizada,
+ * ou null quando não há anel (toque, ou antes do primeiro movimento).
+ */
 export function createCursor(el, { isTouch }) {
   if (!el || isTouch) {
     el?.remove();
-    return { update() {} };
+    return { update: () => null };
   }
 
   let x = 0;
@@ -19,7 +23,7 @@ export function createCursor(el, { isTouch }) {
   return {
     /** mouse = { x, y, moved } em px CSS; lens em [0, 1]; dt em segundos. */
     update(mouse, lens, dt) {
-      if (!mouse.moved) return;
+      if (!mouse.moved) return null;
       if (!started) {
         started = true;
         x = mouse.x;
@@ -36,6 +40,7 @@ export function createCursor(el, { isTouch }) {
       }
       el.style.transform = `translate3d(${x - size / 2}px, ${y - size / 2}px, 0)`;
       el.classList.toggle('cursor--lens', lens > 0.5);
+      return { x, y };
     },
   };
 }

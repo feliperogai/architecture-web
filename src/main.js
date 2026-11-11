@@ -110,15 +110,15 @@ function update(now) {
   hud.update(state.hour, sunPosition(state.hour));
   reveal.update();
   sundial.update(state.hour, scrollY);
-  cursor.update(state.mouse, state.halftone, dt);
+  const ring = cursor.update(state.mouse, state.halftone, dt);
 
   if (world) {
-    // Lente: segue o mouse; em toque (ou antes do 1º movimento) fica fixa em (50%, 42%).
-    const lensFree = !state.isTouch && state.mouse.moved;
+    // Lente: no centro do anel do cursor (mesma posição suavizada, então a borda casa com o anel);
+    // em toque, ou antes do 1º movimento, fica fixa em (50%, 42%) da área útil.
     const lens = {
       mix: state.halftone,
-      lensX: lensFree ? state.mouse.x : innerWidth * 0.5,
-      lensY: lensFree ? state.mouse.y : innerHeight * 0.42,
+      lensX: ring ? ring.x : root.clientWidth * 0.5,
+      lensY: ring ? ring.y : root.clientHeight * 0.42,
       radius: LENS_RADIUS,
     };
     const offset = state.isTouch
@@ -163,7 +163,7 @@ async function startWorld() {
     });
     state.webgl = true;
     root.classList.remove('no-webgl');
-    addEventListener('resize', () => world?.resize(innerWidth, innerHeight));
+    addEventListener('resize', () => world?.resize());
   } catch (error) {
     console.warn('Meridiana: cena 3D indisponível, seguindo com o fundo em CSS.', error);
   }
