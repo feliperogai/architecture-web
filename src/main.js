@@ -8,6 +8,7 @@ import { createSundial } from './ui/sundial.js';
 import { createCursor } from './ui/cursor.js';
 import { playIntro } from './ui/intro.js';
 import { createAnnotations } from './ui/annotations.js';
+import { createTypography } from './ui/typography.js';
 import { PROJECTS } from './data/projects.js';
 import { STACKED_LAYOUT_QUERY } from './layout.js';
 import { explodeTarget } from './scene/explode.js';
@@ -36,6 +37,7 @@ const sundial = createSundial(document.querySelector('[data-sundial]'));
 const cursor = createCursor(document.querySelector('#cursor'), state);
 playIntro(document.querySelector('#intro'), { reduced: state.reducedMotion });
 const annotations = createAnnotations(document.querySelector('.notes'), PROJECTS);
+const typography = createTypography(root, document.querySelector('.hero__title'));
 
 // Lista de detalhes: aberta (só para leitores de tela) no desktop; recolhida no layout empilhado.
 const stackedQuery = matchMedia(STACKED_LAYOUT_QUERY);
@@ -135,7 +137,9 @@ function update(now) {
 
   const sky = skyAt(state.hour);
   paintSky(sky, state.hour);
-  hud.update(state.hour, sunPosition(state.hour));
+  const realSun = sunPosition(state.hour);
+  hud.update(state.hour, realSun);
+  typography.update(realSun);
   reveal.update();
   sundial.update(state.hour, scrollY);
   const ring = cursor.update(state.mouse, state.halftone, dt);

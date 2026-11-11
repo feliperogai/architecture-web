@@ -15,6 +15,7 @@
   --fg: var(--ink);
   --fg-soft: var(--ink-soft);
 
+  --font-display: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif: 'Instrument Serif', 'Times New Roman', serif;
   --font-sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-dot: 'Doto', ui-monospace, monospace;
@@ -359,16 +360,23 @@ main,
 .hero {
   align-items: flex-end;
   padding-bottom: 12vh;
-  color: var(--ink);
+  color: var(--paper); /* abertura sobre a avenida escura do amanhecer */
 }
 
 .hero__title {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
+  text-shadow: var(--title-shadow, none);
   font-weight: 400;
-  font-size: clamp(4rem, 14vw, 13rem);
+  font-size: clamp(3.4rem, 11.5vw, 10.5rem);
   line-height: 0.86;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.04em;
+}
+
+/* "Meridiana" letra a letra: mais pesada do lado do sol (peso em --w, vindo do JS) */
+.hero__title span {
+  font-variation-settings: 'wght' var(--w, var(--title-wght, 600)), 'wdth' var(--title-wdth, 100), 'opsz' 96;
+  transition: font-variation-settings 0.5s ease;
 }
 
 .hero__tagline {
@@ -395,7 +403,7 @@ main,
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--ink);
+  background: var(--paper);
   animation: hint 1.8s ease-in-out infinite;
 }
 
@@ -432,7 +440,9 @@ main,
 
 .projects__lede {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
+  font-variation-settings: 'wght' var(--title-wght, 600), 'wdth' var(--title-wdth, 100), 'opsz' 72;
+  text-shadow: var(--title-shadow, none);
   font-size: clamp(2rem, 4vw, 3.4rem);
   line-height: 1.05;
 }
@@ -468,7 +478,9 @@ main,
 
 .project__title {
   margin: 0 0 16px;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
+  font-variation-settings: 'wght' var(--title-wght, 600), 'wdth' var(--title-wdth, 100), 'opsz' 72;
+  text-shadow: var(--title-shadow, none);
   font-weight: 400;
   font-size: clamp(2.2rem, 3.6vw, 3.2rem);
   line-height: 1;
@@ -664,7 +676,9 @@ main,
 
 .contact__title {
   margin: 0 0 22px;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
+  font-variation-settings: 'wght' var(--title-wght, 600), 'wdth' var(--title-wdth, 100), 'opsz' 72;
+  text-shadow: var(--title-shadow, none);
   font-size: clamp(2.2rem, 5.4vw, 4.6rem);
   line-height: 1.02;
 }
