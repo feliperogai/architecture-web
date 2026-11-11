@@ -9,10 +9,17 @@
 Uma *meridiana* é uma linha no chão de igrejas antigas onde um raio de sol, entrando por um furo no telhado, marca o meio-dia. Ali, o prédio funciona como um relógio. O site leva essa ideia para a página:
 
 - **A rolagem é a hora do dia.** Sol, céu, névoa, câmera, janelas e relógio respondem a um único valor.
-- **O mouse empurra o sol** alguns graus, e as sombras dos prédios acompanham.
-- **Projetos em halftone:** entre 10h e 16h a cena vira pontos sobre papel, e o cursor é uma lente que revela o render.
-- **À noite as janelas acendem em pixels** e aparecem as estrelas.
-- **Relógio de sol tipográfico,** relógio em matriz de pontos e a linha de latão (a meridiana) como régua do dia.
+- **Uma cidade-maquete inteira:** 523 prédios brancos com caixas d'água, ruas com faixas de pedestre, árvores, postes, pessoas e 70 carros andando. A Avenida Meridiana tem a linha de latão no canteiro central. À noite, a cidade acende janela por janela.
+- **Quatro obras detalhadas,** as únicas com materiais reais: Casa Varanda, Pavilhão Seco, Biblioteca Fresta e Mirante Brisa.
+  - A câmera para e orbita cada obra enquanto a sombra anda pelo prédio.
+  - **Anotações técnicas** presas ao 3D, em letra de arquiteto: seis por obra.
+  - **Botão "Explodir camadas":** separa a obra em fundação, estrutura, lajes, vedações, cobertura, interiores e paisagismo.
+- **Halftone nos voos:** entre uma obra e outra, a cidade vira pontos sobre papel e o cursor é uma lente que revela o render.
+- **Planta de situação** no canto: quadras, avenida, obras numeradas, norte, escala, câmera e sol.
+- **Tipografia viva:**
+  - os títulos em Bricolage Grotesque ficam finos e condensados à noite e pesados ao meio-dia;
+  - eles projetam uma sombra longa oposta ao sol;
+  - em "Meridiana", as letras do lado do sol ficam mais grossas.
 
 ## Como rodar
 
@@ -37,10 +44,11 @@ Como o repositório já é o site, ele pode ser publicado como está (por exempl
 ```
 index.html              conteúdo (texto real, semântico) e import map
 src/main.js             liga rolagem, hora, interface e cena
-src/time/               funções puras: interpolação, relógio, sol, céu (testadas)
-src/scene/              Three.js: mundo, céu, prédios, janelas, estrelas, câmera, halftone
-src/ui/                 HUD, manifesto, relógio de sol, intro, cursor
-src/data/projects.js    geometria e enquadramento dos 4 projetos
+src/time/               funções puras: interpolação, relógio, sol, céu, halftone (testadas)
+src/city/               cidade gerada como dados puros a partir de uma semente (testada)
+src/scene/              Three.js: mundo, céu, cidade, obras por camada, estrelas, câmera, halftone
+src/ui/                 HUD, manifesto, relógio de sol, intro, cursor, anotações, tipografia, planta
+src/data/projects.js    peças, camadas, notas e câmera das 4 obras
 tests/                  node --test
 docs/superpowers/       spec e plano de implementação
 ```
