@@ -76,10 +76,13 @@ Os textos de cada projeto ficam no `index.html`, como texto real. `src/data/proj
 
 ### 4.1 Stack
 
-- **Vite** para desenvolvimento e build, com **JavaScript puro** (módulos ES) e sem framework.
-- **Three.js** (via npm) para a cena, incluindo o pós-processamento de `three/examples/jsm/postprocessing`.
-- **Vitest** para os testes unitários.
-- Saída: site estático em `dist/`. Nenhum deploy é configurado nesta etapa.
+- **JavaScript puro** (módulos ES nativos do navegador), sem framework e **sem bundler**.
+- **Three.js 0.187.0** carregado por *import map* a partir do jsDelivr (`three` e `three/addons/`), incluindo o pós-processamento de `three/addons/postprocessing/`.
+- **Testes** com o runner nativo do Node (`node --test`, Node ≥ 22). Nenhuma dependência npm.
+- **Servidor local**: `scripts/serve.js` (Node, sem dependências), porta 5173.
+- Saída: o próprio repositório já é o site estático, publicável como está (por exemplo no GitHub Pages). Nenhum deploy é configurado nesta etapa.
+
+> Mudança em relação à versão aprovada (Vite + Vitest): nesta máquina, uma política de controle de aplicativos do Windows bloqueia os binários nativos do Vite 8 (Rolldown), e a versão WebAssembly não lê os caminhos do projeto. Sem bundler, o resultado para o visitante é o mesmo e o projeto fica sem dependências.
 
 ### 4.2 Estrutura de arquivos
 
