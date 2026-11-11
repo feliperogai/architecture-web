@@ -10,6 +10,7 @@ import { createWindows } from './windows.js';
 import { createStars } from './stars.js';
 import { PROJECTS } from '../data/projects.js';
 import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
+import { createHalftonePass, updateHalftone } from './halftone.js';
 
 const PARALLAX = 0.6;
 
@@ -91,6 +92,8 @@ export function createWorld(canvas, { isTouch }) {
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(new OutputPass());
+  const halftonePass = createHalftonePass(); // depois do OutputPass: trabalha em sRGB
+  composer.addPass(halftonePass);
 
   const lightDir = new THREE.Vector3();
   const moonDir = new THREE.Vector3();
@@ -108,7 +111,14 @@ export function createWorld(canvas, { isTouch }) {
     composer,
     focus,
 
-    update({ hour, sun, sky, mouse, reducedMotion }) {
+    update({ hour, sun, sky, mouse, reducedMotion, halftone }) {
+      updateHalftone(halftonePass, {
+        ...halftone,
+        width: innerWidth,
+        height: innerHeight,
+        pixelRatio: renderer.getPixelRatio(),
+      });
+
       // Câmera: trajeto do dia + paralaxe sutil do mouse (fixa com "reduzir movimento")
       const view = reducedMotion ? REDUCED_MOTION_VIEW : sampleCamera(hour, cameraKeyframes);
       const px = reducedMotion ? 0 : mouse.nx * PARALLAX;

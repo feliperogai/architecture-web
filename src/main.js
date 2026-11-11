@@ -83,6 +83,8 @@ function paintSky(sky, hour) {
 
 /* ── Loop ── */
 const HOUR_RATE = rateFromFrameFactor(0.08); // "lerp de 0,08 por quadro" a 60 fps, em qualquer FPS
+const HALFTONE_RATE = rateFromFrameFactor(0.06);
+const LENS_RADIUS = 140;
 let lastTime = 0;
 
 function update(now) {
@@ -98,6 +100,11 @@ function update(now) {
     if (Math.abs(state.hour - state.targetHour) < 1e-4) state.hour = state.targetHour;
   }
 
+  // Halftone: liga entre 09:30 e 16:30 (seção de projetos), com transição suave.
+  // Só faz sentido com a cena 3D; sem WebGL o cursor continua pequeno.
+  const halftoneTarget = world && state.hour >= 9.5 && state.hour <= 16.5 ? 1 : 0;
+  state.halftone = dt === 0 ? halftoneTarget : damp(state.halftone, halftoneTarget, HALFTONE_RATE, dt);
+
   const sky = skyAt(state.hour);
   paintSky(sky, state.hour);
   hud.update(state.hour, sunPosition(state.hour));
@@ -106,6 +113,14 @@ function update(now) {
   cursor.update(state.mouse, state.halftone, dt);
 
   if (world) {
+    // Lente: segue o mouse; em toque (ou antes do 1º movimento) fica fixa em (50%, 42%).
+    const lensFree = !state.isTouch && state.mouse.moved;
+    const lens = {
+      mix: state.halftone,
+      lensX: lensFree ? state.mouse.x : innerWidth * 0.5,
+      lensY: lensFree ? state.mouse.y : innerHeight * 0.42,
+      radius: LENS_RADIUS,
+    };
     const offset = state.isTouch
       ? { azimuth: 0, altitude: 0 }
       : { azimuth: state.mouse.nx * 12, altitude: -state.mouse.ny * 5 };
@@ -115,6 +130,7 @@ function update(now) {
       sky,
       mouse: state.mouse,
       reducedMotion: state.reducedMotion,
+      halftone: lens,
     });
     world.render();
   }
