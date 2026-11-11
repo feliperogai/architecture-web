@@ -182,5 +182,39 @@ export function generateCity(opts = CITY_DEFAULTS, reserved = []) {
     }
   }
 
-  return { streets, blocks, buildings, rooftops, trees, lamps, people, crosswalks, dashes, lanes: [], cars: [] };
+  // Faixas de rolamento: duas por rua, em sentidos opostos (±2,5 m do eixo; ±6 m na avenida)
+  const lanes = [];
+  for (const street of streets) {
+    const off = street.width === opts.avenue ? 6 : 2.5;
+    if (street.axis === 'x') {
+      lanes.push({ start: [street.at + off, street.from], end: [street.at + off, street.to] });
+      lanes.push({ start: [street.at - off, street.to], end: [street.at - off, street.from] });
+    } else {
+      lanes.push({ start: [street.from, street.at - off], end: [street.to, street.at - off] });
+      lanes.push({ start: [street.to, street.at + off], end: [street.from, street.at + off] });
+    }
+  }
+
+  const cars = [];
+  for (let i = 0; i < 70; i++) {
+    const lane = Math.floor(rand() * lanes.length);
+    const [sx, sz] = lanes[lane].start;
+    const [ex, ez] = lanes[lane].end;
+    cars.push({ lane, phase: range(rand, 0, Math.hypot(ex - sx, ez - sz)), speed: range(rand, 6, 11) });
+  }
+
+  return { streets, blocks, buildings, rooftops, trees, lamps, people, crosswalks, dashes, lanes, cars };
+}
+
+/** Posição do carro no instante t (s): anda pela faixa e dá a volta. rotY aponta o movimento. */
+export function carPosition(car, lane, t) {
+  const dx = lane.end[0] - lane.start[0];
+  const dz = lane.end[1] - lane.start[1];
+  const length = Math.hypot(dx, dz);
+  const s = (((car.phase + car.speed * t) % length) + length) % length;
+  return {
+    x: lane.start[0] + (dx / length) * s,
+    z: lane.start[1] + (dz / length) * s,
+    rotY: Math.atan2(dx, dz),
+  };
 }
