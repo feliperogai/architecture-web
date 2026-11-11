@@ -3,6 +3,10 @@ import { computeAnchors, hourFromScroll } from './time/clock.js';
 import { sunPosition } from './time/sun.js';
 import { skyAt } from './time/sky.js';
 import { createHud } from './ui/hud.js';
+import { createReveal } from './ui/reveal.js';
+import { createSundial } from './ui/sundial.js';
+import { createCursor } from './ui/cursor.js';
+import { playIntro } from './ui/intro.js';
 
 const root = document.documentElement;
 const meridian = document.querySelector('.meridian');
@@ -10,7 +14,8 @@ const meridian = document.querySelector('.meridian');
 const state = {
   targetHour: 6,
   hour: 6,
-  mouse: { x: innerWidth / 2, y: innerHeight * 0.42, nx: 0, ny: 0 },
+  mouse: { x: innerWidth / 2, y: innerHeight * 0.42, nx: 0, ny: 0, moved: false },
+  halftone: 0,
   isTouch: matchMedia('(hover: none)').matches,
   reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
   webgl: false,
@@ -19,6 +24,10 @@ const state = {
 const params = new URLSearchParams(location.search);
 
 const hud = createHud(document.querySelector('.hud'));
+const reveal = createReveal(document.querySelector('[data-reveal]'));
+const sundial = createSundial(document.querySelector('[data-sundial]'));
+const cursor = createCursor(document.querySelector('#cursor'), state);
+playIntro(document.querySelector('#intro'), { reduced: state.reducedMotion });
 
 /* ── Hora a partir da rolagem ── */
 let anchors = [];
@@ -43,6 +52,7 @@ addEventListener('pointermove', (event) => {
   state.mouse.y = event.clientY;
   state.mouse.nx = (event.clientX / innerWidth) * 2 - 1;
   state.mouse.ny = (event.clientY / innerHeight) * 2 - 1;
+  state.mouse.moved = true;
 }, { passive: true });
 
 /* ── Pintura do céu em CSS (vale com ou sem WebGL) ── */
@@ -91,6 +101,9 @@ function update(now) {
   const sky = skyAt(state.hour);
   paintSky(sky, state.hour);
   hud.update(state.hour, sunPosition(state.hour));
+  reveal.update();
+  sundial.update(state.hour, scrollY);
+  cursor.update(state.mouse, state.halftone, dt);
 }
 
 function loop(now) {

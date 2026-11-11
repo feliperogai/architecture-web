@@ -101,6 +101,71 @@ main,
   z-index: 1;
 }
 
+/* ───────────────────────── Intro e cursor ───────────────────────── */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  background: #0b0d1f;
+  color: var(--paper);
+  transition: opacity 0.7s ease, visibility 0.7s;
+  /* Se o JS falhar, a intro some sozinha */
+  animation: intro-fallback 0.6s 4s forwards;
+}
+
+.intro--done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@keyframes intro-fallback {
+  to { opacity: 0; visibility: hidden; }
+}
+
+.intro__time {
+  font-family: var(--font-dot);
+  font-weight: 800;
+  font-size: clamp(4rem, 16vw, 11rem);
+  line-height: 1;
+  color: var(--glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.intro__label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: #b9b6c9;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, border-width 0.3s ease;
+  will-change: transform;
+}
+
+.cursor--visible {
+  opacity: 1;
+}
+
+.cursor--lens {
+  border-width: 1px;
+}
+
 /* ───────────────────────── Topo ───────────────────────── */
 .topbar {
   position: fixed;
@@ -499,6 +564,73 @@ main,
   margin: 0;
   aspect-ratio: 1;
   width: 100%;
+}
+
+.sundial__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sundial__ring-text {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  fill: var(--ink-soft);
+}
+
+.sundial__dial {
+  fill: rgba(255, 255, 255, 0.28);
+  stroke: var(--brass);
+  stroke-width: 1.2;
+}
+
+.sundial__horizon {
+  stroke: var(--brass);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 4;
+}
+
+.sundial__tick {
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+}
+
+.sundial__tick--major {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+.sundial__label {
+  font-family: var(--font-dot);
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.sundial__shadow {
+  fill: var(--ink);
+  opacity: 0.78;
+}
+
+.sundial__pin {
+  fill: var(--brass);
+}
+
+.sundial__time {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 34px;
+  fill: var(--ink);
+  text-anchor: middle;
+}
+
+.word {
+  transition: opacity 0.25s linear;
 }
 
 /* Contato */
