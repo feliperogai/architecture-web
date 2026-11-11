@@ -2,14 +2,14 @@ import { lerp, smoothstep, sampleKeyframes } from '../time/interpolate.js';
 
 // Enquadramentos fixos (valores iniciais, ajustados na verificação visual).
 const FIXED_KEYFRAMES = [
-  { hour: 6, position: [0, 6, 190], target: [20, 8, 0] }, // amanhecer: baixo, na névoa
-  { hour: 8, position: [-20, 30, 150], target: [20, 6, 0] }, // manifesto: sobe devagar
-  { hour: 17.5, position: [150, 18, 90], target: [40, 10, -20] }, // hora dourada
-  { hour: 20, position: [-40, 60, 170], target: [30, 6, -10] }, // noite
-  { hour: 23, position: [0, 140, 260], target: [25, 0, -10] }, // vista geral
+  { hour: 6, position: [0, 3.5, 250], target: [0, 14, 0] }, // amanhecer: rente ao chão, Avenida Meridiana rumo ao norte
+  { hour: 8, position: [-40, 40, 200], target: [20, 6, 0] }, // manifesto: sobe sobre a cidade
+  { hour: 17.5, position: [200, 26, 90], target: [60, 10, -20] }, // hora dourada
+  { hour: 20, position: [-60, 70, 200], target: [40, 6, 0] }, // noite: a cidade acende
+  { hour: 23, position: [0, 170, 320], target: [40, 0, 0] }, // vista geral
 ];
 
-export const REDUCED_MOTION_VIEW = { position: [0, 140, 260], target: [25, 0, -10] };
+export const REDUCED_MOTION_VIEW = { position: [0, 170, 320], target: [40, 0, 0] };
 
 const toWorld = ([x, z], [px, py, pz]) => [px + x, py, pz + z];
 

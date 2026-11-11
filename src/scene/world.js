@@ -12,6 +12,8 @@ import { PROJECTS } from '../data/projects.js';
 import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
 import { createHalftonePass, updateHalftone } from './halftone.js';
 import { isStackedLayout } from '../layout.js';
+import { generateCity, CITY_DEFAULTS } from '../city/generate.js';
+import { createCity } from './city.js';
 
 const PARALLAX = 0.6;
 // Layout empilhado (celular e tablet em pé): a ficha fica embaixo, então a câmera mira o centro
@@ -96,9 +98,14 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     new THREE.BoxGeometry(0.25, 0.02, 600),
     new THREE.MeshStandardMaterial({ color: 0xb08d57, metalness: 0.8, roughness: 0.35, emissive: 0x3a2a10 }),
   );
-  meridian.position.set(0, 0.011, 0);
+  meridian.position.set(0, 0.07, 0); // acima do asfalto da avenida
   meridian.receiveShadow = true;
   scene.add(meridian);
+
+  // Cidade-maquete (as quadras das obras ficam reservadas)
+  const cityData = generateCity(CITY_DEFAULTS, PROJECTS.map((p) => ({ id: p.id, x: p.origin[0], z: p.origin[1] })));
+  const city = createCity(cityData, { sidewalk: CITY_DEFAULTS.sidewalk });
+  scene.add(city.group);
 
   // Projetos, janelas e estrelas
   scene.add(createBuildings(PROJECTS));
@@ -134,8 +141,10 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     renderer,
     composer,
     focus,
+    cityData,
 
-    update({ hour, sun, sky, mouse, reducedMotion, halftone }) {
+    update({ hour, sun, sky, mouse, reducedMotion, halftone, time = 0 }) {
+      city.update({ windowGlow: sky.windowGlow, time });
       updateHalftone(halftonePass, {
         ...halftone,
         width,

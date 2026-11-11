@@ -131,6 +131,7 @@ function update(now) {
       mouse: state.mouse,
       reducedMotion: state.reducedMotion,
       halftone: lens,
+      time: state.reducedMotion ? 0 : now / 1000,
     });
     world.render();
   }

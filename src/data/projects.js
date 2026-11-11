@@ -12,7 +12,7 @@ function varanda() {
   return {
     id: 'varanda',
     hour: 10,
-    origin: [-70, 40],
+    origin: [-45.5, 43],
     volumes: [
       { size: [24, 0.3, 10], pos: [-2, 0.15, -1], material: 'concrete' }, // base
       { size: [18, 3.4, 8], pos: [-2, 2, -1], material: 'glass' }, // caixa de vidro
@@ -32,7 +32,7 @@ function seco() {
   return {
     id: 'seco',
     hour: 12,
-    origin: [-10, -10],
+    origin: [45.5, 43],
     volumes: [
       { size: [28, 0.25, 28], pos: [0, 0.125, 0], material: 'concrete' }, // base
       { size: [26, 5, 1.2], pos: [0, 2.5, -12.4], material: 'concrete' }, // parede cega norte
@@ -76,7 +76,7 @@ function fresta() {
   return {
     id: 'fresta',
     hour: 14,
-    origin: [55, -55],
+    origin: [45.5, -43],
     volumes,
     windows,
     camera: { position: [-52, 12, 30], target: [-6, 14, -10], center: [0, 15, 0] }, // ficha à esquerda → bloco à direita
@@ -95,7 +95,7 @@ function brisa() {
   return {
     id: 'brisa',
     hour: 16,
-    origin: [120, -10],
+    origin: [129, -43],
     volumes,
     windows,
     camera: { position: [24, 5, 34], target: [8, 13, -7], center: [0, 12, 0] }, // ficha à direita → torre à esquerda
