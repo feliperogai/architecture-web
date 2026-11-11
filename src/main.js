@@ -42,7 +42,11 @@ const typography = createTypography(root, document.querySelector('.hero__title')
 
 // Lista de detalhes: aberta (só para leitores de tela) no desktop; recolhida no layout empilhado.
 const stackedQuery = matchMedia(STACKED_LAYOUT_QUERY);
-const syncDetails = () => document.querySelectorAll('.project__more').forEach((d) => { d.open = !stackedQuery.matches; });
+const syncDetails = () => document.querySelectorAll('.project__more').forEach((d) => {
+  d.open = !stackedQuery.matches;
+  // No desktop a lista é só para leitores de tela: o <summary> invisível não pode receber foco
+  d.querySelector('summary').tabIndex = stackedQuery.matches ? 0 : -1;
+});
 stackedQuery.addEventListener('change', syncDetails);
 syncDetails();
 
@@ -157,15 +161,8 @@ function update(now) {
     const offset = state.isTouch
       ? { azimuth: 0, altitude: 0 }
       : { azimuth: state.mouse.nx * 12, altitude: -state.mouse.ny * 5 };
-    world.update({
-      hour: state.hour,
-      sun: sunPosition(state.hour, offset),
-      sky,
-      mouse: state.mouse,
-      reducedMotion: state.reducedMotion,
-      halftone: lens,
-      time: state.reducedMotion ? 0 : now / 1000,
-    });
+    // Vista explodida primeiro: a câmera se afasta e sobe conforme a obra se abre
+    let exploded = { amount: 0, gap: 0 };
     for (const project of PROJECTS) {
       const entry = explode.get(project.id);
       if (!entry) continue;
@@ -174,7 +171,18 @@ function update(now) {
       entry.value = dt === 0 ? target : damp(entry.value, target, EXPLODE_RATE, dt);
       if (Math.abs(entry.value - target) < 1e-3) entry.value = target;
       world.setExplode(project.id, entry.value);
+      if (entry.value > exploded.amount) exploded = { amount: entry.value, gap: project.explodeGap };
     }
+    world.update({
+      hour: state.hour,
+      sun: sunPosition(state.hour, offset),
+      sky,
+      mouse: state.mouse,
+      reducedMotion: state.reducedMotion,
+      halftone: lens,
+      time: state.reducedMotion ? 0 : now / 1000,
+      exploded,
+    });
     world.render();
     sitePlan?.update({ camera: world.cameraState(), sunAzimuth: realSun.azimuth, day: realSun.aboveHorizon });
     annotations.update({

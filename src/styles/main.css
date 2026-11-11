@@ -97,6 +97,20 @@ html.no-webgl #scene {
   display: none;
 }
 
+/* Sem cena 3D: a abertura fica sobre o degradê claro, e explodir/anotar não teria efeito */
+html.no-webgl .hero {
+  color: var(--ink);
+}
+
+html.no-webgl .hero__hint-dot {
+  background: var(--ink);
+}
+
+html.no-webgl .explode,
+html.no-webgl .notes {
+  display: none;
+}
+
 main,
 .footer {
   position: relative;
@@ -875,6 +889,11 @@ main,
   width: 22px;
   height: 1px;
   background: var(--ink);
+}
+
+.layer-label--right::after {
+  left: auto;
+  right: 100%;
 }
 
 /* Lista de detalhes na ficha: no desktop só para leitores de tela; no empilhado, recolhível */

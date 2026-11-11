@@ -5,6 +5,7 @@
 //   material 'window': plano emissivo em pixels (size = [largura, altura]), orientado por rotY.
 
 const deg = (d) => (d * Math.PI) / 180;
+const RAMP_SLOPE = Math.atan(0.925 / 11.6); // 8%: cada lance sobe 0,925 m em 11,6 m
 
 const box = (size, pos, material, layer, extra = {}) => ({ shape: 'box', size, pos, material, layer, ...extra });
 const cyl = (radius, height, pos, material, layer, extra = {}) => ({ shape: 'cylinder', size: [radius, height], pos, material, layer, ...extra });
@@ -151,8 +152,12 @@ function fresta() {
   ];
   const parts = [
     box([18, 2, 18], [0, 1, 0], 'concrete', 'fundacao'),
-    // Rampa acessível de 8% em patamares
-    ...[0.5, 1, 1.5, 2].map((h, i) => box([2, h, 2.4], [-21 + i * 2, h / 2, 0], 'concrete', 'fundacao')),
+    // Rampa acessível de 8%: dois lances de 11,6 m com patamar, da praça (0,15 m) ao platô da entrada (2 m)
+    box([2, 0.25, 11.6], [-13.6, 0.49, 1.5], 'concrete', 'fundacao', { rot: [RAMP_SLOPE, 0, 0] }), // lance 1: sobe para o norte
+    box([5.4, 1.075, 2], [-11.9, 0.54, -5.3], 'concrete', 'fundacao'), // patamar
+    box([2, 0.25, 11.6], [-10.2, 1.41, 1.5], 'concrete', 'fundacao', { rot: [-RAMP_SLOPE, 0, 0] }), // lance 2: volta para o sul, até o platô
+    box([0.05, 0.05, 11.6], [-14.6, 1.39, 1.5], 'steel', 'fundacao', { rot: [RAMP_SLOPE, 0, 0] }), // guarda-corpo
+    box([0.05, 0.05, 11.6], [-11.2, 2.31, 1.5], 'steel', 'fundacao', { rot: [-RAMP_SLOPE, 0, 0] }),
     ...bladeZ.map((bz) => box([18, 26, blade], [0, 15, bz], 'concrete', 'estrutura')),
     box([6, 0.4, 8], [-12, 4.2, 0], 'concrete', 'lajes'), // marquise em balanço
     ...slitZ.flatMap((sz) => [
@@ -186,7 +191,7 @@ function fresta() {
       { id: 'estantes', anchor: [-7.4, 16, slitZ[3]], layer: 'interiores' },
       { id: 'marquise', anchor: [-14.5, 4.4, 2], layer: 'lajes' },
       { id: 'terraco', anchor: [0, 33.2, 0], layer: 'cobertura' },
-      { id: 'rampa', anchor: [-19, 1.2, 0], layer: 'fundacao' },
+      { id: 'rampa', anchor: [-13.6, 0.9, 1.5], layer: 'fundacao' },
     ],
     camera: { position: [-52, 12, 30], target: [-6, 14, -10], center: [0, 15, 0], orbit: 16 },
     explodeGap: 5,
@@ -247,7 +252,7 @@ function brisa() {
       { id: 'biruta', anchor: [2, 28, 1.2], layer: 'cobertura' },
       { id: 'cerrado', anchor: [5, 1, 3], layer: 'paisagismo' },
     ],
-    camera: { position: [24, 5, 34], target: [8, 13, -7], center: [0, 12, 0], orbit: 16 },
+    camera: { position: [28, 7, 40], target: [8, 15, -7], center: [0, 14, 0], orbit: 16 },
     explodeGap: 4,
   };
 }

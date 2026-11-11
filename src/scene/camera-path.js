@@ -59,3 +59,22 @@ export function sampleCamera(hour, keyframes) {
     return view;
   });
 }
+
+/**
+ * Ajusta a vista à obra explodida: sobe alvo e câmera até o meio da pilha de camadas
+ * e se afasta, para todas as camadas caberem no quadro. amount = 0 não muda nada.
+ */
+export function explodeFraming(view, amount, gap, layerCount) {
+  if (!amount) return view;
+  const stack = gap * (layerCount - 1); // quanto a camada mais alta sobe (m)
+  const raise = (amount * stack) / 2;
+  const pull = 1 + (amount * stack) / 40; // pilhas mais altas pedem mais recuo
+  const lift = (p) => [p[0], p[1] + raise, p[2]];
+  const position = view.position.map((v, i) => view.target[i] + (v - view.target[i]) * pull);
+  return {
+    ...view,
+    position: lift(position),
+    target: lift(view.target),
+    ...(view.center ? { center: lift(view.center) } : {}),
+  };
+}

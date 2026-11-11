@@ -8,7 +8,8 @@ import { createSkyDome } from './sky-dome.js';
 import { createBuildings } from './buildings.js';
 import { createStars } from './stars.js';
 import { PROJECTS } from '../data/projects.js';
-import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
+import { buildCameraKeyframes, sampleCamera, explodeFraming, REDUCED_MOTION_VIEW } from './camera-path.js';
+import { LAYERS } from './explode.js';
 import { createHalftonePass, updateHalftone } from './halftone.js';
 import { isStackedLayout } from '../layout.js';
 import { generateCity, CITY_DEFAULTS } from '../city/generate.js';
@@ -158,7 +159,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
       return [ndc.x, ndc.y, ndc.z];
     },
 
-    update({ hour, sun, sky, mouse, reducedMotion, halftone, time = 0 }) {
+    update({ hour, sun, sky, mouse, reducedMotion, halftone, time = 0, exploded = { amount: 0, gap: 0 } }) {
       city.update({ windowGlow: sky.windowGlow, time });
       updateHalftone(halftonePass, {
         ...halftone,
@@ -168,7 +169,8 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
       });
 
       // Câmera: trajeto do dia + paralaxe sutil do mouse (fixa com "reduzir movimento")
-      const view = reducedMotion ? REDUCED_MOTION_VIEW : sampleCamera(hour, cameraKeyframes);
+      const base = reducedMotion ? REDUCED_MOTION_VIEW : sampleCamera(hour, cameraKeyframes);
+      const view = explodeFraming(base, exploded.amount, exploded.gap, LAYERS.length);
       const px = reducedMotion ? 0 : mouse.nx * PARALLAX;
       const py = reducedMotion ? 0 : -mouse.ny * PARALLAX;
       camera.position.set(view.position[0] + px, view.position[1] + py, view.position[2]);

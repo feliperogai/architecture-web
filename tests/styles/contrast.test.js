@@ -55,4 +55,12 @@ describe('contraste AA do texto em latão (spec §7)', () => {
   it('no painel noturno a etiqueta volta ao latão claro', () => {
     assert.ok(ruleUses('.panel--night .label', 'color', 'var(--brass)'));
   });
+
+  it('sem WebGL, o texto da abertura volta à tinta (fundo é o degradê claro)', () => {
+    assert.ok(ruleUses('html.no-webgl .hero', 'color', 'var(--ink)'));
+  });
+
+  it('sem WebGL, botão de explosão e anotações somem (não fariam nada)', () => {
+    assert.ok(/html\.no-webgl \.explode,\s*html\.no-webgl \.notes\s*\{[^}]*display:\s*none/.test(css));
+  });
 });

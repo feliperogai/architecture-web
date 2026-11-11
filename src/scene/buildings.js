@@ -151,7 +151,7 @@ export function createBuildings(projects) {
       }
     },
 
-    /** Rótulos das camadas não vazias: à esquerda da obra, na altura (já explodida) de cada camada. */
+    /** Rótulos das camadas não vazias, na altura (já explodida) de cada camada: à esquerda e à direita da obra. */
     layerAnchors(id) {
       const entry = byId.get(id);
       if (!entry) return [];
@@ -160,7 +160,13 @@ export function createBuildings(projects) {
         .filter((layer) => !layer.box.isEmpty())
         .map((layer) => {
           const centerY = (layer.box.min.y + layer.box.max.y) / 2 + layer.group.position.y;
-          return { id: layer.id, label: layer.label, position: [ox + layer.box.min.x - 3, centerY, oz + (layer.box.min.z + layer.box.max.z) / 2] };
+          const z = oz + (layer.box.min.z + layer.box.max.z) / 2;
+          return {
+            id: layer.id,
+            label: layer.label,
+            left: [ox + layer.box.min.x - 3, centerY, z],
+            right: [ox + layer.box.max.x + 3, centerY, z],
+          };
         });
     },
 
