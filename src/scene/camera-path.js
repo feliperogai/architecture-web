@@ -13,19 +13,38 @@ export const REDUCED_MOTION_VIEW = { position: [0, 170, 320], target: [40, 0, 0]
 
 const toWorld = ([x, z], [px, py, pz]) => [px + x, py, pz + z];
 
+const DEFAULT_ORBIT = 16; // graus girados durante a parada em cada obra
+const HOLD = 0.5; // a parada vai de hora − 0,5 a hora + 0,5
+
+/** Gira um ponto em torno do eixo vertical que passa por `center`. */
+function rotateAround([x, y, z], [cx, , cz], angle) {
+  const dx = x - cx;
+  const dz = z - cz;
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  return [cx + dx * c + dz * s, y, cz - dx * s + dz * c];
+}
+
 /**
- * Keyframes fixos + um por projeto, em coordenadas absolutas, ordenados por hora.
+ * Keyframes fixos + dois por obra (início e fim da parada, com a vista girada em torno do centro),
+ * em coordenadas absolutas, ordenados por hora.
  * `target` desloca o prédio para o lado oposto à ficha (desktop);
  * `center` é o centro do prédio, usado em telas em pé (a ficha fica embaixo).
  */
 export function buildCameraKeyframes(projects) {
   const fixed = FIXED_KEYFRAMES.map((k) => ({ ...k, center: k.target }));
-  const fromProjects = projects.map((p) => ({
-    hour: p.hour,
-    position: toWorld(p.origin, p.camera.position),
-    target: toWorld(p.origin, p.camera.target),
-    center: toWorld(p.origin, p.camera.center ?? p.camera.target),
-  }));
+  const fromProjects = projects.flatMap((p) => {
+    const center = toWorld(p.origin, p.camera.center ?? p.camera.target);
+    const position = toWorld(p.origin, p.camera.position);
+    const target = toWorld(p.origin, p.camera.target);
+    const half = (((p.camera.orbit ?? DEFAULT_ORBIT) / 2) * Math.PI) / 180;
+    return [-1, 1].map((side) => ({
+      hour: p.hour + side * HOLD,
+      position: rotateAround(position, center, side * half),
+      target: rotateAround(target, center, side * half),
+      center,
+    }));
+  });
   return [...fixed, ...fromProjects].sort((a, b) => a.hour - b.hour);
 }
 

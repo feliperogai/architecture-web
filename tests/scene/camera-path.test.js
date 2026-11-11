@@ -28,14 +28,17 @@ describe('sampleCamera', () => {
 });
 
 describe('buildCameraKeyframes', () => {
-  it('soma origin do projeto e ordena por hora', () => {
-    const k = buildCameraKeyframes([
-      { id: 'x', hour: 10, origin: [100, -50], camera: { position: [1, 2, 3], target: [0, 1, 0] } },
-    ]);
-    const p = k.find((f) => f.hour === 10);
-    assert.deepEqual(p.position, [101, 2, -47]);
-    assert.deepEqual(p.target, [100, 1, -50]);
-    assert.deepEqual(k.map((f) => f.hour), [...k.map((f) => f.hour)].sort((a, b) => a - b));
+  it('dois keyframes por obra (parada com órbita) em torno do centro', () => {
+    const k = buildCameraKeyframes([{ id: 'x', hour: 10, origin: [100, -50],
+      camera: { position: [0, 2, 20], target: [0, 1, 0], center: [0, 1, 0], orbit: 16 } }]);
+    const a = k.find((f) => f.hour === 9.5), b = k.find((f) => f.hour === 10.5);
+    assert.ok(a && b);
+    const dist = (f) => Math.hypot(f.position[0] - 100, f.position[2] + 50);
+    assertClose(dist(a), 20, 6);
+    assertClose(dist(b), 20, 6);
+    assert.notDeepEqual(a.position, b.position);
+    assert.deepEqual(a.center, [100, 1, -50]);
+    assert.deepEqual(k.map((f) => f.hour), [...k.map((f) => f.hour)].sort((m, n) => m - n));
   });
 
   it('inclui os keyframes fixos de amanhecer, manifesto, estúdio, contato e rodapé', () => {
@@ -47,7 +50,7 @@ describe('buildCameraKeyframes', () => {
     const k = buildCameraKeyframes([
       { id: 'x', hour: 10, origin: [100, -50], camera: { position: [1, 2, 3], target: [0, 1, 0], center: [0, 5, 0] } },
     ]);
-    assert.deepEqual(k.find((f) => f.hour === 10).center, [100, 5, -50]);
+    assert.deepEqual(k.find((f) => f.hour === 9.5).center, [100, 5, -50]);
     const fixed = k.find((f) => f.hour === 6);
     assert.deepEqual(fixed.center, fixed.target);
   });

@@ -314,7 +314,7 @@ main,
 }
 
 .hour-mark--project {
-  top: 80vh; /* ficha já parada (sticky) e a anterior fora da tela */
+  top: 100vh; /* meio da parada: ficha já parada (sticky) e a anterior fora da tela */
 }
 
 .panel {
@@ -444,7 +444,7 @@ main,
 
 .project {
   position: relative;
-  min-height: 160vh;
+  min-height: 200vh; /* parada longa: a câmera orbita enquanto se lê */
   padding: 0 var(--gutter);
 }
 

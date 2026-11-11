@@ -11,6 +11,9 @@ import { createAnnotations } from './ui/annotations.js';
 import { PROJECTS } from './data/projects.js';
 import { STACKED_LAYOUT_QUERY } from './layout.js';
 import { explodeTarget } from './scene/explode.js';
+import { halftoneTarget } from './time/halftone.js';
+
+const PROJECT_HOURS = PROJECTS.map((p) => p.hour);
 
 const root = document.documentElement;
 const meridian = document.querySelector('.meridian');
@@ -125,10 +128,10 @@ function update(now) {
     if (Math.abs(state.hour - state.targetHour) < 1e-4) state.hour = state.targetHour;
   }
 
-  // Halftone: liga entre 09:30 e 16:30 (seção de projetos), com transição suave.
+  // Halftone: só nos voos entre as obras (nítido na parada de cada uma), com transição suave.
   // Só faz sentido com a cena 3D; sem WebGL o cursor continua pequeno.
-  const halftoneTarget = world && state.hour >= 9.5 && state.hour <= 16.5 ? 1 : 0;
-  state.halftone = dt === 0 ? halftoneTarget : damp(state.halftone, halftoneTarget, HALFTONE_RATE, dt);
+  const halftoneGoal = world ? halftoneTarget(state.hour, PROJECT_HOURS) : 0;
+  state.halftone = dt === 0 ? halftoneGoal : damp(state.halftone, halftoneGoal, HALFTONE_RATE, dt);
 
   const sky = skyAt(state.hour);
   paintSky(sky, state.hour);
