@@ -5,6 +5,10 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { smoothstep } from '../time/interpolate.js';
 import { sunDirection } from '../time/sun.js';
 import { createSkyDome } from './sky-dome.js';
+import { createBuildings } from './buildings.js';
+import { createWindows } from './windows.js';
+import { createStars } from './stars.js';
+import { PROJECTS } from '../data/projects.js';
 
 const SUN_DISTANCE = 300;
 const MIN_LIGHT_ALTITUDE = 4;
@@ -73,6 +77,13 @@ export function createWorld(canvas, { isTouch }) {
   meridian.receiveShadow = true;
   scene.add(meridian);
 
+  // Projetos, janelas e estrelas
+  scene.add(createBuildings(PROJECTS));
+  const windows = createWindows(PROJECTS);
+  scene.add(windows.group);
+  const stars = createStars();
+  scene.add(stars.points);
+
   // Pós-processamento
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
@@ -119,6 +130,9 @@ export function createWorld(canvas, { isTouch }) {
 
       skyDome.mesh.position.copy(camera.position);
       skyDome.update(sky, d, sunVisible);
+      stars.points.position.copy(camera.position);
+      stars.update(sky.starOpacity);
+      windows.update(sky.windowGlow);
     },
 
     resize(width, height) {
