@@ -1,4 +1,4 @@
-import { smoothstep } from '../time/interpolate.js';
+import { clamp, smoothstep } from '../time/interpolate.js';
 
 /** Opacidade das notas: cheia até ±0,35 h da obra, some até ±0,6 h. */
 export const noteOpacity = (hour, projectHour) => 1 - smoothstep((Math.abs(hour - projectHour) - 0.35) / 0.25);
@@ -27,6 +27,7 @@ export function createAnnotations(root, projects) {
   root.append(lines);
 
   const items = new Map(); // id da obra → [{ note, dot, label, line }]
+  const layerLabels = new Map(); // id da camada → elemento (reaproveitado entre obras)
   for (const project of projects) {
     const article = document.querySelector(`[data-project="${project.id}"]`);
     const side = article?.dataset.side === 'left' ? 1 : -1; // ficha à esquerda → etiquetas à direita
@@ -48,6 +49,17 @@ export function createAnnotations(root, projects) {
     items.set(project.id, list);
   }
 
+  const layerLabelFor = (id, text) => {
+    if (!layerLabels.has(id)) {
+      const el = document.createElement('div');
+      el.className = 'layer-label';
+      el.textContent = text;
+      root.append(el);
+      layerLabels.set(id, el);
+    }
+    return layerLabels.get(id);
+  };
+
   const hide = (item) => {
     item.dot.style.opacity = '0';
     item.label.style.opacity = '0';
@@ -59,7 +71,7 @@ export function createAnnotations(root, projects) {
      * hour: hora suavizada; notePosition(id, note) → [x,y,z]; projectNdc([x,y,z]) → [x,y,z];
      * width/height: área útil em px; stacked: layout empilhado.
      */
-    update({ hour, notePosition, projectNdc, width, height, stacked }) {
+    update({ hour, notePosition, projectNdc, width, height, stacked, layerAnchors, explodeValue }) {
       // 1) Leituras e contas
       let active = null;
       let best = 0;
@@ -78,6 +90,13 @@ export function createAnnotations(root, projects) {
           return { item, screen, lx, ly: screen.y + item.dy };
         })
         : [];
+      // Rótulos das camadas na vista explodida
+      const exploded = active ? explodeValue(active.id) : 0;
+      const layerOpacity = Math.min(best, clamp((exploded - 0.3) / 0.4, 0, 1));
+      const layers = active && layerOpacity > 0.01
+        ? layerAnchors(active.id).map((anchor) => ({ anchor, screen: screenFromNdc(projectNdc(anchor.position), width, height) }))
+        : [];
+
       // Sem sobreposição: em cada lado, etiquetas a pelo menos LABEL_GAP px umas das outras
       for (const side of [-1, 1]) {
         const column = placed.filter((p) => p.item.side === side && p.screen.visible).sort((a, b) => a.ly - b.ly);
@@ -85,6 +104,16 @@ export function createAnnotations(root, projects) {
       }
 
       // 2) Escritas no DOM
+      const shown = new Set();
+      for (const { anchor, screen } of layers) {
+        const el = layerLabelFor(anchor.id, anchor.label);
+        if (!screen.visible) continue;
+        shown.add(anchor.id);
+        el.style.opacity = layerOpacity.toFixed(3);
+        el.style.transform = `translate(${screen.x}px, ${screen.y}px) translate(-100%, -50%)`;
+      }
+      for (const [id, el] of layerLabels) if (!shown.has(id)) el.style.opacity = '0';
+
       root.classList.toggle('notes--stacked', stacked);
       for (const [id, list] of items) if (!active || id !== active.id) list.forEach(hide);
       for (const { item, screen, lx, ly } of placed) {

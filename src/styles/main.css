@@ -796,6 +796,73 @@ main,
   background: var(--ink);
 }
 
+
+/* Vista explodida */
+.explode {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 9px 14px;
+  font: 600 0.72rem/1 var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.explode:hover {
+  background: #33333a;
+}
+
+.explode[aria-pressed='true'] {
+  color: var(--ink);
+  background: var(--glow);
+}
+
+.explode__icon {
+  position: relative;
+  width: 14px;
+  height: 12px;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 50% / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 100% / 100% 2px no-repeat;
+  transition: height 0.25s ease;
+}
+
+.explode[aria-pressed='true'] .explode__icon {
+  height: 18px;
+}
+
+.layer-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  padding: 3px 8px;
+  font: 800 12px/1.2 var(--font-dot);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--paper);
+  background: var(--ink);
+  will-change: transform;
+}
+
+.layer-label::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 22px;
+  height: 1px;
+  background: var(--ink);
+}
+
 /* Lista de detalhes na ficha: no desktop só para leitores de tela; no empilhado, recolhível */
 .project__more {
   position: absolute;

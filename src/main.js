@@ -10,6 +10,7 @@ import { playIntro } from './ui/intro.js';
 import { createAnnotations } from './ui/annotations.js';
 import { PROJECTS } from './data/projects.js';
 import { STACKED_LAYOUT_QUERY } from './layout.js';
+import { explodeTarget } from './scene/explode.js';
 
 const root = document.documentElement;
 const meridian = document.querySelector('.meridian');
@@ -38,6 +39,19 @@ const stackedQuery = matchMedia(STACKED_LAYOUT_QUERY);
 const syncDetails = () => document.querySelectorAll('.project__more').forEach((d) => { d.open = !stackedQuery.matches; });
 stackedQuery.addEventListener('change', syncDetails);
 syncDetails();
+
+/* ── Vista explodida: um botão por ficha ── */
+const explode = new Map(); // id → { pressed, value, button }
+function setPressed(entry, pressed) {
+  entry.pressed = pressed;
+  entry.button.setAttribute('aria-pressed', String(pressed));
+  entry.button.querySelector('.explode__text').textContent = pressed ? 'Montar a obra' : 'Explodir camadas';
+}
+for (const button of document.querySelectorAll('[data-explode]')) {
+  const entry = { pressed: false, value: 0, button };
+  explode.set(button.dataset.explode, entry);
+  button.addEventListener('click', () => setPressed(entry, !entry.pressed));
+}
 
 /* ── Hora a partir da rolagem ── */
 let anchors = [];
@@ -94,6 +108,7 @@ function paintSky(sky, hour) {
 /* ── Loop ── */
 const HOUR_RATE = rateFromFrameFactor(0.08); // "lerp de 0,08 por quadro" a 60 fps, em qualquer FPS
 const HALFTONE_RATE = rateFromFrameFactor(0.06);
+const EXPLODE_RATE = rateFromFrameFactor(0.08);
 const LENS_RADIUS = 140;
 let lastTime = 0;
 
@@ -143,6 +158,15 @@ function update(now) {
       halftone: lens,
       time: state.reducedMotion ? 0 : now / 1000,
     });
+    for (const project of PROJECTS) {
+      const entry = explode.get(project.id);
+      if (!entry) continue;
+      const target = explodeTarget(state.hour, project.hour, entry.pressed);
+      if (entry.pressed && target === 0) setPressed(entry, false); // rolou para longe: fecha
+      entry.value = dt === 0 ? target : damp(entry.value, target, EXPLODE_RATE, dt);
+      if (Math.abs(entry.value - target) < 1e-3) entry.value = target;
+      world.setExplode(project.id, entry.value);
+    }
     world.render();
     annotations.update({
       hour: state.hour,
@@ -151,6 +175,8 @@ function update(now) {
       width: root.clientWidth,
       height: root.clientHeight,
       stacked: stackedQuery.matches,
+      layerAnchors: world.layerAnchors,
+      explodeValue: (id) => explode.get(id)?.value ?? 0,
     });
   }
 }
