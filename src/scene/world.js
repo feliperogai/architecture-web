@@ -126,6 +126,7 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
 
   const lightDir = new THREE.Vector3();
   const ndc = new THREE.Vector3();
+  const viewDir = new THREE.Vector3();
   const moonDir = new THREE.Vector3();
   const cameraKeyframes = buildCameraKeyframes(PROJECTS);
 
@@ -144,6 +145,12 @@ export function createWorld(canvas, { isTouch, onContextLost }) {
     setExplode: buildings.setExplode,
     layerAnchors: buildings.layerAnchors,
     notePosition: buildings.notePosition,
+
+    /** Posição e direção (no plano) da câmera, para a planta de situação. */
+    cameraState() {
+      camera.getWorldDirection(viewDir);
+      return { x: camera.position.x, z: camera.position.z, dirX: viewDir.x, dirZ: viewDir.z };
+    },
 
     /** Ponto do mundo → coordenadas normalizadas da câmera atual ([−1, 1], z fora disso = atrás/longe). */
     projectNdc([x, y, z]) {

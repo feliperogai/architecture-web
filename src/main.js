@@ -9,6 +9,7 @@ import { createCursor } from './ui/cursor.js';
 import { playIntro } from './ui/intro.js';
 import { createAnnotations } from './ui/annotations.js';
 import { createTypography } from './ui/typography.js';
+import { createSitePlan } from './ui/siteplan.js';
 import { PROJECTS } from './data/projects.js';
 import { STACKED_LAYOUT_QUERY } from './layout.js';
 import { explodeTarget } from './scene/explode.js';
@@ -175,6 +176,7 @@ function update(now) {
       world.setExplode(project.id, entry.value);
     }
     world.render();
+    sitePlan?.update({ camera: world.cameraState(), sunAzimuth: realSun.azimuth, day: realSun.aboveHorizon });
     annotations.update({
       hour: state.hour,
       notePosition: world.notePosition,
@@ -190,6 +192,7 @@ function update(now) {
 
 /* ── Cena 3D (opcional: sem WebGL o fundo CSS continua contando o dia) ── */
 let world = null;
+let sitePlan = null;
 
 function hasWebGL() {
   if (params.has('nowebgl')) return false;
@@ -215,6 +218,7 @@ async function startWorld() {
     });
     state.webgl = true;
     root.classList.remove('no-webgl');
+    sitePlan = createSitePlan(document.querySelector('.siteplan'), world.cityData, PROJECTS);
     addEventListener('resize', () => world?.resize());
   } catch (error) {
     console.warn('Meridiana: cena 3D indisponível, seguindo com o fundo em CSS.', error);
