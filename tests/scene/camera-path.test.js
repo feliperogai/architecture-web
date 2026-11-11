@@ -42,4 +42,23 @@ describe('buildCameraKeyframes', () => {
     const hours = buildCameraKeyframes([]).map((f) => f.hour);
     assert.deepEqual(hours, [6, 8, 17.5, 20, 23]);
   });
+
+  it('centro do prédio (para telas em pé): soma origin; nos fixos, centro = alvo', () => {
+    const k = buildCameraKeyframes([
+      { id: 'x', hour: 10, origin: [100, -50], camera: { position: [1, 2, 3], target: [0, 1, 0], center: [0, 5, 0] } },
+    ]);
+    assert.deepEqual(k.find((f) => f.hour === 10).center, [100, 5, -50]);
+    const fixed = k.find((f) => f.hour === 6);
+    assert.deepEqual(fixed.center, fixed.target);
+  });
+});
+
+describe('sampleCamera com centro', () => {
+  it('interpola o centro junto com posição e alvo', () => {
+    const withCenter = [
+      { hour: 6, position: [0, 0, 0], target: [0, 0, 0], center: [0, 0, 0] },
+      { hour: 8, position: [10, 20, 30], target: [2, 2, 2], center: [4, 8, 12] },
+    ];
+    assert.deepEqual(sampleCamera(7, withCenter).center, [2, 4, 6]);
+  });
 });

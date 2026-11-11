@@ -152,19 +152,40 @@ async function startWorld() {
   if (!hasWebGL()) return;
   try {
     const { createWorld } = await import('./scene/world.js');
-    world = createWorld(document.querySelector('#scene'), { isTouch: state.isTouch });
+    world = createWorld(document.querySelector('#scene'), {
+      isTouch: state.isTouch,
+      onContextLost() {
+        // GPU reiniciou ou o navegador derrubou o contexto: volta para o fundo em CSS.
+        world = null;
+        state.webgl = false;
+        root.classList.add('no-webgl');
+      },
+    });
     state.webgl = true;
     root.classList.remove('no-webgl');
-    addEventListener('resize', () => world.resize(innerWidth, innerHeight));
+    addEventListener('resize', () => world?.resize(innerWidth, innerHeight));
   } catch (error) {
     console.warn('Meridiana: cena 3D indisponível, seguindo com o fundo em CSS.', error);
   }
 }
 
+let rafId = 0;
+
 function loop(now) {
   update(now);
-  requestAnimationFrame(loop);
+  rafId = requestAnimationFrame(loop);
 }
+
+// Pausa com a aba oculta; ao voltar, o primeiro quadro já pula para a hora certa.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  } else if (!rafId) {
+    lastTime = 0;
+    rafId = requestAnimationFrame(loop);
+  }
+});
 
 // Inspeção manual com ?debug: __meridiana.tick() avança um quadro já na hora-alvo,
 // útil quando o navegador não está renderizando (aba em segundo plano).
@@ -181,5 +202,5 @@ if (params.has('debug')) {
 }
 
 root.classList.add('no-webgl');
-requestAnimationFrame(loop);
+rafId = requestAnimationFrame(loop);
 startWorld();

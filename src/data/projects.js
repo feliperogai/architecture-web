@@ -24,7 +24,7 @@ function varanda() {
       { size: [16, 3], pos: [-2, 2, 3.02], rotY: 0 },
       { size: [16, 3], pos: [-2, 2, -5.02], rotY: Math.PI },
     ],
-    camera: { position: [-34, 6, 34], target: [-6, 3, -8] }, // ficha à esquerda → casa à direita
+    camera: { position: [-34, 6, 34], target: [-6, 3, -8], center: [0, 3, 0] }, // ficha à esquerda → casa à direita
   };
 }
 
@@ -48,7 +48,7 @@ function seco() {
       { size: [20, 3], pos: [0, 2.2, -11.79], rotY: 0 },
       { size: [20, 3], pos: [0, 2.2, 11.79], rotY: Math.PI },
     ],
-    camera: { position: [50, 26, 42], target: [6, 3, -8] }, // ficha à direita → pavilhão à esquerda
+    camera: { position: [50, 26, 42], target: [6, 3, -8], center: [0, 3, 0] }, // ficha à direita → pavilhão à esquerda
   };
 }
 
@@ -79,7 +79,7 @@ function fresta() {
     origin: [55, -55],
     volumes,
     windows,
-    camera: { position: [-52, 12, 30], target: [-6, 14, -10] }, // ficha à esquerda → bloco à direita
+    camera: { position: [-52, 12, 30], target: [-6, 14, -10], center: [0, 15, 0] }, // ficha à esquerda → bloco à direita
   };
 }
 
@@ -98,7 +98,7 @@ function brisa() {
     origin: [120, -10],
     volumes,
     windows,
-    camera: { position: [24, 5, 34], target: [8, 13, -7] }, // ficha à direita → torre à esquerda
+    camera: { position: [24, 5, 34], target: [8, 13, -7], center: [0, 12, 0] }, // ficha à direita → torre à esquerda
   };
 }
 

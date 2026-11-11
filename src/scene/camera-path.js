@@ -13,22 +13,30 @@ export const REDUCED_MOTION_VIEW = { position: [0, 140, 260], target: [25, 0, -1
 
 const toWorld = ([x, z], [px, py, pz]) => [px + x, py, pz + z];
 
-/** Keyframes fixos + um por projeto, em coordenadas absolutas, ordenados por hora. */
+/**
+ * Keyframes fixos + um por projeto, em coordenadas absolutas, ordenados por hora.
+ * `target` desloca o prédio para o lado oposto à ficha (desktop);
+ * `center` é o centro do prédio, usado em telas em pé (a ficha fica embaixo).
+ */
 export function buildCameraKeyframes(projects) {
+  const fixed = FIXED_KEYFRAMES.map((k) => ({ ...k, center: k.target }));
   const fromProjects = projects.map((p) => ({
     hour: p.hour,
     position: toWorld(p.origin, p.camera.position),
     target: toWorld(p.origin, p.camera.target),
+    center: toWorld(p.origin, p.camera.center ?? p.camera.target),
   }));
-  return [...FIXED_KEYFRAMES, ...fromProjects].sort((a, b) => a.hour - b.hour);
+  return [...fixed, ...fromProjects].sort((a, b) => a.hour - b.hour);
 }
 
 const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 
-/** Posição e alvo da câmera para uma hora, com easing smoothstep entre keyframes vizinhos. */
+/** Posição, alvo e centro da câmera para uma hora, com easing smoothstep entre keyframes vizinhos. */
 export function sampleCamera(hour, keyframes) {
   return sampleKeyframes(keyframes, hour, (a, b, t) => {
     const e = smoothstep(t);
-    return { position: mix3(a.position, b.position, e), target: mix3(a.target, b.target, e) };
+    const view = { position: mix3(a.position, b.position, e), target: mix3(a.target, b.target, e) };
+    if (a.center && b.center) view.center = mix3(a.center, b.center, e);
+    return view;
   });
 }

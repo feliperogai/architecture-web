@@ -13,6 +13,12 @@ import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camer
 import { createHalftonePass, updateHalftone } from './halftone.js';
 
 const PARALLAX = 0.6;
+// Telas em pé (celular): a ficha fica embaixo, então a câmera mira o centro do prédio,
+// se afasta um pouco e abre o campo de visão para o prédio caber na largura estreita.
+const PORTRAIT_ASPECT = 0.85;
+const PORTRAIT_PULLBACK = 1.25;
+const PORTRAIT_LIFT = 0.14; // abaixa o olhar para o prédio subir no quadro
+const fovFor = (aspect) => (aspect < PORTRAIT_ASPECT ? 55 : 40);
 
 const SUN_DISTANCE = 300;
 const MIN_LIGHT_ALTITUDE = 4;
@@ -21,8 +27,12 @@ const MIN_LIGHT_ALTITUDE = 4;
  * Renderer, câmera, luzes, terreno e a linha da meridiana.
  * update(frame) recebe { hour, sun, sky } e só altera a cena; render() desenha.
  */
-export function createWorld(canvas, { isTouch }) {
+export function createWorld(canvas, { isTouch, onContextLost }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+  canvas.addEventListener('webglcontextlost', (event) => {
+    event.preventDefault();
+    onContextLost?.();
+  });
   renderer.setPixelRatio(Math.min(devicePixelRatio, isTouch ? 1.5 : 2));
   renderer.setSize(innerWidth, innerHeight, false);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -32,7 +42,7 @@ export function createWorld(canvas, { isTouch }) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0xf2a7a0, 0.022);
 
-  const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.5, 2500);
+  const camera = new THREE.PerspectiveCamera(fovFor(innerWidth / innerHeight), innerWidth / innerHeight, 0.5, 2500);
   camera.position.set(0, 140, 260);
   const focus = new THREE.Vector3(25, 0, -10);
   camera.lookAt(focus);
@@ -125,6 +135,11 @@ export function createWorld(canvas, { isTouch }) {
       const py = reducedMotion ? 0 : -mouse.ny * PARALLAX;
       camera.position.set(view.position[0] + px, view.position[1] + py, view.position[2]);
       focus.set(view.target[0], view.target[1], view.target[2]);
+      if (camera.aspect < PORTRAIT_ASPECT && view.center) {
+        focus.set(view.center[0], view.center[1], view.center[2]);
+        camera.position.sub(focus).multiplyScalar(PORTRAIT_PULLBACK).add(focus);
+        focus.y -= camera.position.distanceTo(focus) * PORTRAIT_LIFT;
+      }
       camera.lookAt(focus);
 
       // Sol: some suavemente entre −2° e 4° de altitude
@@ -161,6 +176,7 @@ export function createWorld(canvas, { isTouch }) {
       renderer.setSize(width, height, false);
       composer.setSize(width, height);
       camera.aspect = width / height;
+      camera.fov = fovFor(camera.aspect);
       camera.updateProjectionMatrix();
     },
 
