@@ -302,6 +302,20 @@ main,
   padding: 120px var(--gutter);
 }
 
+/* Marcadores de hora: a hora da seção é atingida quando o marcador cruza o centro da tela */
+.hour-mark {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.hour-mark--project {
+  top: 80vh; /* ficha já parada (sticky) e a anterior fora da tela */
+}
+
 .panel {
   position: relative;
   background: rgba(243, 239, 231, 0.74);

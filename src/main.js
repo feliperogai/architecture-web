@@ -109,7 +109,13 @@ function update(now) {
     const offset = state.isTouch
       ? { azimuth: 0, altitude: 0 }
       : { azimuth: state.mouse.nx * 12, altitude: -state.mouse.ny * 5 };
-    world.update({ hour: state.hour, sun: sunPosition(state.hour, offset), sky });
+    world.update({
+      hour: state.hour,
+      sun: sunPosition(state.hour, offset),
+      sky,
+      mouse: state.mouse,
+      reducedMotion: state.reducedMotion,
+    });
     world.render();
   }
 }

@@ -9,6 +9,9 @@ import { createBuildings } from './buildings.js';
 import { createWindows } from './windows.js';
 import { createStars } from './stars.js';
 import { PROJECTS } from '../data/projects.js';
+import { buildCameraKeyframes, sampleCamera, REDUCED_MOTION_VIEW } from './camera-path.js';
+
+const PARALLAX = 0.6;
 
 const SUN_DISTANCE = 300;
 const MIN_LIGHT_ALTITUDE = 4;
@@ -91,6 +94,7 @@ export function createWorld(canvas, { isTouch }) {
 
   const lightDir = new THREE.Vector3();
   const moonDir = new THREE.Vector3();
+  const cameraKeyframes = buildCameraKeyframes(PROJECTS);
 
   function placeLight(light, dir) {
     light.target.position.copy(focus);
@@ -104,7 +108,15 @@ export function createWorld(canvas, { isTouch }) {
     composer,
     focus,
 
-    update({ sun, sky }) {
+    update({ hour, sun, sky, mouse, reducedMotion }) {
+      // Câmera: trajeto do dia + paralaxe sutil do mouse (fixa com "reduzir movimento")
+      const view = reducedMotion ? REDUCED_MOTION_VIEW : sampleCamera(hour, cameraKeyframes);
+      const px = reducedMotion ? 0 : mouse.nx * PARALLAX;
+      const py = reducedMotion ? 0 : -mouse.ny * PARALLAX;
+      camera.position.set(view.position[0] + px, view.position[1] + py, view.position[2]);
+      focus.set(view.target[0], view.target[1], view.target[2]);
+      camera.lookAt(focus);
+
       // Sol: some suavemente entre −2° e 4° de altitude
       const sunVisible = smoothstep((sun.altitude + 2) / 6);
       const d = sunDirection(Math.max(sun.altitude, MIN_LIGHT_ALTITUDE), sun.azimuth);
